@@ -16,8 +16,8 @@
             v-model="tab"
             class="text-teal "
         >
-            <q-tab name="mails" label="Weekly" />
-            <q-tab name="alarms" label="Monthly" />
+            <q-tab name="weekly" label="Weekly" />
+            <q-tab name="monthly" label="Monthly" />
         </q-tabs>
     </q-header>
     <div
@@ -29,10 +29,12 @@
           <TicketPieChart></TicketPieChart>
         </card-base>
       </div>
-    <!--  <div class="col-md-6 col-sm-12 col-xs-12">
-        <apex-column-with-scroll></apex-column-with-scroll>
-      </div>
       <div class="col-md-6 col-sm-12 col-xs-12">
+        <card-base>
+          <DailyTicketTracker></DailyTicketTracker>
+        </card-base>
+      </div>
+      <!--  <div class="col-md-6 col-sm-12 col-xs-12">
         <card-base>
           <apex-donut></apex-donut>
         </card-base>
@@ -150,7 +152,8 @@ export default {
   name: 'PageIndex',
   components: {
     CardBase,
-    TicketPieChart: () => import('components/TicketPieChart')
+    TicketPieChart: () => import('components/TicketPieChart'),
+    DailyTicketTracker: () => import('components/DailyTicketTracker'),
   },
   data () {
     return {
@@ -166,6 +169,13 @@ export default {
     }
   },
   created () {
+     this.$q.loading.show({
+      backgroundColor: 'purple-10',
+      delay: 0
+    })
+    setTimeout(() => {
+      this.$q.loading.hide()
+    }, 1300)
   }
 }
 </script>

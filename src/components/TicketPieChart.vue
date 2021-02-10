@@ -46,7 +46,7 @@ export default {
             },
             title: {
             text: 'Ticket Tracker',
-            align: 'left',
+            align: 'center',
             style: {
                 color: '#FFF'
             }
@@ -54,6 +54,9 @@ export default {
             labels: ['Open Tickets', 'Closed Tickets'],
             responsive: [{
             breakpoint: 480,
+            total: {
+                show: true
+            },
             options: {
                 chart: {
                 width: 250
