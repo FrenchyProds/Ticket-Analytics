@@ -12,6 +12,11 @@ npm install
 quasar dev
 ```
 
+### If you get a .babel-src error when trying to start the app, run the following command
+```bash
+npx quasar dev
+```
+
 ### Lint the files
 ```bash
 npm run lint

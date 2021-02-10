@@ -42,37 +42,8 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-    #[Route('/dashboard/{problemName}/{detailName}/{startDate}/{endDate}/{companyName}/{employeeName}')]
-    public function analyticsDashboard(Request $request, $problemName, $detailName, $startDate, $endDate, $companyName, $employeeName) {
-        if ($_GET["problemName"] != 'all') {
-            $problem = $request->request->get('problemName');
-        }
-        if ($_GET["detailName"] != 'all') {
-            $problem = $request->request->get('detailName');
-        }
-        if ($_GET["startDate"] != 'all') {
-            $problem = $request->request->get('startDate');
-        }
-        if ($_GET["endDate"] != 'all') {
-            $problem = $request->request->get('endDate');
-        }
-        if ($_GET["companyName"] != 'all') {
-            $problem = $request->request->get('companyName');
-        }
-        if ($_GET["employeeName"] != 'all') {
-            $problem = $request->request->get('employeeName');
-        }
-        
-    }
-
-    // ========================================================
-    // ========================================================
-    // ======== TICKET STATUS PIE CHART CONTROLLER ============
-    // ========================================================
-    // ========================================================
-
-        #[Route('/dashboard/getProblems/{problemName}/{detailName}')]
-        public function getProblems(Request $request, $problemName, $detailName) {
+        #[Route('/dashboard/ticketpiechart/{problemName}/{detailName}')]
+        public function ticketPieChart(Request $request, $problemName, $detailName) {
 
             $req = $this->getDoctrine()->getManager();
 
@@ -84,7 +55,7 @@ class AnalyticsController extends Controller {
 
             if($problemName != '%') {
             $fetchDetails = $req->createQuery(
-                'SELECT pd.name AS name, pd.id AS id
+                'SELECT pd.name AS name, pd.id AS id, p.id as parent
                     FROM App\Entity\Problem p, App\Entity\ProblemDetail pd
                         WHERE pd.problem = p.id AND p.id LIKE :problemId' 
             );
