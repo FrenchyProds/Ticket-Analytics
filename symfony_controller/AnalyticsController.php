@@ -105,45 +105,55 @@ class AnalyticsController extends Controller {
 
     // ========================================================
     // ========================================================
-    // ======== TICKET TRACKER CONTROLLER =====================
+    // ================ 24 HOUR GRID ==========================
     // ========================================================
     // ========================================================
 
-    #[Route('/dashboard/ticketTracker')]
-    public function ticketTracker(Request $request) {
+    #[Route('/dashboard/hourlygrid/{user}/{startDate}/{endDate}')]
+
+    public function hourlyGrid(Request $request, $user, $startDate, $endDate) {
+
         $req = $this->getDoctrine()->getManager();
-        $dateFormat = date("Y-m-d h:i:s");
-        $getStartDate = new \DateTime("2019-11-13 00:00:00");
-        $today = new \DateTime('now');
 
-        $openTicket = $req->createQuery(
-            'SELECT COUNT(t.id) AS openTicketsOverPeriod
-                FROM App\Entity\Ticket t
-                WHERE t.created BETWEEN :getStartDate AND :today'
+        $fetchUsers = $req->createQuery(
+            'SELECT u.name AS name, u.id AS id
+                FROM App\Entity\Users u
+                    WHERE u.employe = 1'
         );
-        $openTicket->setParameter('getStartDate', $getStartDate->format('Y-m-d h:i:s'))
-                    ->setParameter('today', $today->format('Y:m:d h:i:s'));
-        $resOpen = $openTicket->getResult();
+        $userList = $fetchUsers->getResult();
 
-        $closedTickets = $req->createQuery(
-            'SELECT COUNT(t.id) AS closedTicketsOverPeriod
-            FROM App\Entity\Ticket t
-            WHERE t.ticketstatus = 2 AND t.created between :getStartDate AND :today'
-        );
-        $closedTickets->setParameter('getStartDate', $getStartDate->format('Y-m-d h:i:s'))
-                    ->setParameter('today', $today->format('Y:m:d h:i:s'));
-        $resClosed = $closedTickets->getResult();
+        $endDate = new \DateTime('now');
+        $end = $endDate->format('Y-m-d H:i:s');
+        $startDate = date_modify($endDate, '-7 day');
+        $start = $startDate->format('Y-m-d H:i:s');
+        
 
-        $res = new JsonResponse();
-        $res->headers->set('Content-Type', 'application/json');
-        $res->setData(array('openTickets' => $resOpen, $resClosed));
-        echo '<p>A total of <strong>' . $resOpen[0]['openTicketsOverPeriod'] . '</strong> have been opened between ' . $getStartDate->format('d-m-Y') . ' and ' . $today->format('d-m-Y') . ' !</p>';
+        $openTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as Hour_Opened, COUNT(HOUR(th.    updated)) AS Amount_Created_At_Hour
+                        FROM ticket_history th, users u
+                        WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.id LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY Hour_Opened';
+        $openReq = $req->getConnection()->prepare($openTickets);
+        $openReq->bindParam('userId', $user);
+        $openReq->bindParam('startDate', $start);
+        $openReq->bindParam('endDate', $end);
+        $openReq->execute();
+        $openTicketsResult = ($openReq->fetchAll());
 
-        echo '<p>A total of <strong>' . $resClosed[0]['closedTicketsOverPeriod'] . '</strong> have been closed between ' . $getStartDate->format('d-m-Y') . ' and ' . $today->format('d-m-Y') . ' !</p>';
 
-        echo '<p>This means that, over the period, ' . round($resClosed[0]['closedTicketsOverPeriod']/$resOpen[0]['openTicketsOverPeriod'], 4)*100 . '% of all tickets have been closed !';
+        $closedTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as Hour_Opened, COUNT(HOUR(th.    updated)) AS Amount_Created_At_Hour
+                        FROM ticket_history th, users u
+                        WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.id LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY Hour_Opened';
+        $closeReq = $req->getConnection()->prepare($closedTickets);
+        $closeReq->bindParam('userId', $user);
+        $closeReq->bindParam('startDate', $start);
+        $closeReq->bindParam('endDate', $end);
+        $closeReq->execute();
+        $closedTicketsResult = ($closeReq->fetchAll());
 
-        die();
+        return $this->json(array('users' => $userList,
+                                 'openTickets' => $openTicketsResult,
+                                 'closedTickets' => $closedTicketsResult
+
+        ));
     }
 
 
