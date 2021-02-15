@@ -167,7 +167,7 @@ export default {
   mounted() { 
       this.currentDate = new Date()
       this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
-      this.currentDateMinusWeek = date.subtractFromDate(this.currentDate, { days: 7 })
+      this.currentDateMinusWeek = date.subtractFromDate(this.currentDate, { days: 30 })
       this.startDate = date.formatDate(this.currentDateMinusWeek, 'YYYY-MM-DD')
       this.dateStart = this.startDate
       this.paramRoute = '%/' + this.startDate + '/' + this.endDate
@@ -397,7 +397,7 @@ export default {
 
      save () {
       this.dateStart = this.startDate
-      this.dateEnd = date.addToDate(this.startDate, { days: 7 })
+      this.dateEnd = date.addToDate(this.startDate, { days: 30 })
       this.endDate = date.formatDate(this.dateEnd, 'YYYY/MM/DD')
       try {
             if(!this.selectedUser) {

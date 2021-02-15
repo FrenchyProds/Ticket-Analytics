@@ -16,133 +16,98 @@
             v-model="tab"
             class="text-teal "
         >
-            <q-tab name="weekly" label="Weekly" />
-            <q-tab name="monthly" label="Monthly" />
+            <q-tab @click="toggleWeek()" v-model="week" name="weekly" label="Weekly" />
+            <q-tab @click="toggleMonth()" v-model="month" name="monthly" label="Monthly" />
+            <q-tab @click="toggleRawData()" v-model="rawData" name="rawData" label="Raw Data"/>
         </q-tabs>
     </q-header>
-    <div
-      class="row q-col-gutter-md q-px-md q-py-md"
-      key="allCharts"
-    >
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <TicketPieChart></TicketPieChart>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <DailyTicketTracker></DailyTicketTracker>
-        </card-base>
-      </div>
-      <!--  <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-donut></apex-donut>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-line></apex-line>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-line-gradient></apex-line-gradient>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-multiple-radial-bars></apex-multiple-radial-bars>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-heatmap></apex-heatmap>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-radial-bar></apex-radial-bar>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-bubble></apex-bubble>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-radar></apex-radar>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-polar-map></apex-polar-map>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-candle-stick></apex-candle-stick>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-treemap></apex-treemap>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-line-column></apex-line-column>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <apex-line-column-with-scroll></apex-line-column-with-scroll>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-line-scatter></apex-line-scatter>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-area></apex-area>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-bar-charts-grouped></apex-bar-charts-grouped>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-column-charts-basic></apex-column-charts-basic>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-column-with-data-labels></apex-column-with-data-labels>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-line-with-data-labels></apex-line-with-data-labels>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-multiple-yaxis></apex-multiple-yaxis>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-simple-pie-chart></apex-simple-pie-chart>
-        </card-base>
-      </div>
-      <div class="col-md-6 col-sm-12 col-xs-12">
-        <card-base>
-          <apex-stacked-columns-100></apex-stacked-columns-100>
-        </card-base>
-      </div> -->
-    </div>
+    <q-tab-panels
+      transition-prev="fade"
+      transition-next="fade"
+      v-model="tab">
+      <q-tab-panel
+        name="weekly"
+        v-if="week == true"
+        class="row q-col-gutter-md q-px-md q-py-md"
+        key="allCharts"
+      >
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <TicketPieChart></TicketPieChart>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <DailyTicketTracker></DailyTicketTracker>
+          </card-base>
+        </div>
+        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-donut></apex-donut>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-line></apex-line>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-line-gradient></apex-line-gradient>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-stacked-columns-100></apex-stacked-columns-100>
+          </card-base>
+        </div> -->
+      </q-tab-panel>
+      <q-tab-panel
+        name="monthly"
+        v-if="month == true"
+        class="row q-col-gutter-md q-px-md q-py-md"
+        key="allCharts"
+      >
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <TicketPieChart></TicketPieChart>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <DailyTicketTrackerMonthly></DailyTicketTrackerMonthly>
+          </card-base>
+        </div>
+        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-donut></apex-donut>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-line></apex-line>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-line-gradient></apex-line-gradient>
+          </card-base>
+        </div>
+        <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
+          <card-base>
+            <apex-stacked-columns-100></apex-stacked-columns-100>
+          </card-base>
+        </div> -->
+      </q-tab-panel>
+      <q-tab-panel
+      name="rawData"
+      v-if="rawData == true"
+      >
+        <RawData></RawData>
+      </q-tab-panel>
+    </q-tab-panels>
   </q-page>
 </template>
 
@@ -154,9 +119,14 @@ export default {
     CardBase,
     TicketPieChart: () => import('components/TicketPieChart'),
     DailyTicketTracker: () => import('components/DailyTicketTracker'),
+    DailyTicketTrackerMonthly: () => import('components/DailyTicketTrackerMonthly'),
+    RawData: () => import('components/RawData'),
   },
   data () {
     return {
+      week: true,
+      month: false,
+      rawData: false,
       loading: true,
       dialog: true,
       colors: [
@@ -165,10 +135,11 @@ export default {
         'linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)',
         'linear-gradient( 135deg, #EE9AE5 10%, #5961F9 100%)'
       ],
-      tab: 'mails'
+      tab: 'weekly'
     }
   },
   created () {
+    this.toggleWeek();
      this.$q.loading.show({
       backgroundColor: 'purple-10',
       delay: 0
@@ -176,6 +147,23 @@ export default {
     setTimeout(() => {
       this.$q.loading.hide()
     }, 1300)
+  },
+  methods: {
+    toggleWeek() {
+      this.week = true;
+      this.month = false;
+      this.rawData = false;
+    },
+    toggleMonth() {
+      this.week = false;
+      this.month = true;
+      this.rawData = false;
+    },
+    toggleRawData() {
+      this.week = false;
+      this.month = false;
+      this.rawData = true;
+    }
   }
 }
 </script>

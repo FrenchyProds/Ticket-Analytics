@@ -1,5 +1,6 @@
 <template>
     <div>
+        <p class="chartTitle">Total open and closed tickets at current date</p>
         <form method="get" name="selectProblem">
             <select v-model="selectedProblem" @change="onChange()" class="problems" name="problems">
                 <option selected value="All">All</option>
@@ -12,11 +13,11 @@
                 <option class="optionTrigger" v-for="detail in details" :key="detail.id" :value="(detail.id)">{{ detail.name }}</option>
             </select>
         </form>
-        <div v-if="openTickets || closedTickets != 0">
-            <apexchart id="ticketPieChart" type="pie" height="230" :options="chartOptions" :series="series"></apexchart>
+        <div class="chartRender" v-if="openTickets || closedTickets != 0">
+            <apexchart id="ticketPieChart" type="pie" height="300" width="100%" :options="chartOptions" :series="series"></apexchart>
         </div>
-        <div v-else>
-            <p class="text-h6 text-center text-white">There are no tickets of this type !</p>
+        <div class="emptyContent" v-else>
+            <p>There are no tickets of this type !</p>
         </div>
     </div>
 </template>
@@ -104,13 +105,6 @@ export default {
                             show: true
                         },
                         },
-                        title: {
-                        text: 'Total open & closed tickets',
-                        align: 'center',
-                        style: {
-                            color: '#FFF'
-                        }
-                        },
                         labels: ['Open Tickets', 'Closed Tickets'],
                         colors: ['#054206', '#AF0909'],
                         responsive: [{
@@ -173,13 +167,6 @@ export default {
                             show: true
                         },
                         },
-                        title: {
-                        text: 'Total open & closed tickets',
-                        align: 'center',
-                        style: {
-                            color: '#FFF'
-                        }
-                        },
                         labels: ['Open Tickets', 'Closed Tickets'],
                         colors: ['#054206', '#AF0909'],
                         responsive: [{
@@ -236,13 +223,6 @@ export default {
                         toolbar: {
                             show: true
                         },
-                        },
-                        title: {
-                        text: 'Total open & closed tickets',
-                        align: 'center',
-                        style: {
-                            color: '#FFF'
-                        }
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
                         colors: ['#054206', '#AF0909'],
@@ -305,7 +285,45 @@ export default {
 </script>
 
 <style>
+form:nth-child(odd) {
+    padding-bottom: 1rem;
+}
+
 .apexcharts-legend-text {
     color: white !important;
 }
+
+.apexcharts-canvas {
+    width: 100% !important;
+    text-align: center;
+}
+
+.apexcharts-canvas svg {
+    margin: auto;
+}
+
+.chartTitle {
+    color: white;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.chartRender {
+    padding-top: 2rem;
+}
+
+.emptyContent {
+  padding: 20px;
+  background-color: #f44336; /* Red */
+  color: white;
+  text-align: center;
+  font-size: 1.3rem;
+  align-self: center;
+}
+
+.emptyContent p {
+    margin: auto;
+    line-height: 1.4;
+}
+
 </style>

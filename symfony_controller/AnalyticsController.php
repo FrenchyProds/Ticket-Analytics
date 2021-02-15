@@ -38,6 +38,21 @@ class AnalyticsController extends Controller {
 
     // ========================================================
     // ========================================================
+    // ==================== RAW DATA ==========================
+    // ========================================================
+    // ========================================================
+
+    #[Route('/dashboard/rawData/{problemName}/{detailName}/{companyName}/{employeeName}/{employeeStatus}/{ticketLevel}/{ticketStatus}/{startDate}/{endDate}')]
+    public function rawData(Request $request) {
+        $req = $this->getDoctrine()->getManager();
+
+        $fetchData = $req->createQuery(
+            'SELECT * FROM *'
+        );
+    }
+
+    // ========================================================
+    // ========================================================
     // ======== TICKET STATUS PIE CHART CONTROLLER ============
     // ========================================================
     // ========================================================
@@ -121,31 +136,24 @@ class AnalyticsController extends Controller {
                     WHERE u.employe = 1'
         );
         $userList = $fetchUsers->getResult();
-
-        $endDate = new \DateTime('now');
-        $end = $endDate->format('Y-m-d H:i:s');
-        $startDate = date_modify($endDate, '-7 day');
-        $start = $startDate->format('Y-m-d H:i:s');
         
-
-        $openTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as Hour_Opened, COUNT(HOUR(th.    updated)) AS Amount_Created_At_Hour
+        $openTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as hourOpened, COUNT(HOUR(th.    updated)) AS totalOpened
                         FROM ticket_history th, users u
-                        WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.id LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY Hour_Opened';
+                        WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.name LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY hourOpened';
         $openReq = $req->getConnection()->prepare($openTickets);
         $openReq->bindParam('userId', $user);
-        $openReq->bindParam('startDate', $start);
-        $openReq->bindParam('endDate', $end);
+        $openReq->bindParam('startDate', $startDate);
+        $openReq->bindParam('endDate', $endDate);
         $openReq->execute();
         $openTicketsResult = ($openReq->fetchAll());
 
-
-        $closedTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as Hour_Opened, COUNT(HOUR(th.    updated)) AS Amount_Created_At_Hour
+        $closedTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as hourClosed, COUNT(HOUR(th.  updated)) AS totalClosed
                         FROM ticket_history th, users u
-                        WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.id LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY Hour_Opened';
+                        WHERE th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1 AND u.name LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY hourClosed';
         $closeReq = $req->getConnection()->prepare($closedTickets);
         $closeReq->bindParam('userId', $user);
-        $closeReq->bindParam('startDate', $start);
-        $closeReq->bindParam('endDate', $end);
+        $closeReq->bindParam('startDate', $startDate);
+        $closeReq->bindParam('endDate', $endDate);
         $closeReq->execute();
         $closedTicketsResult = ($closeReq->fetchAll());
 
@@ -163,8 +171,8 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-    #[Route('/dashboard/companyGraph')]
-    public function companyGraph(Request $request) {
+    #[Route('/dashboard/companygraph/{problemName}/{detailName}/{companyName}/{ticketStatus}/{startDate}/{endDate}')]
+    public function companyGraph(Request $request, $problemName, $detailName, $companyName, $ticketStatus, $startDate, $endDate) {
         $req = $this->getDoctrine()->getManager();
 
         // $problem = $request->request->get('problem');
