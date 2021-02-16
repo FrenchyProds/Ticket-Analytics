@@ -139,7 +139,6 @@ export default {
     }
   },
   created () {
-    this.toggleWeek();
      this.$q.loading.show({
       backgroundColor: 'purple-10',
       delay: 0
@@ -149,20 +148,32 @@ export default {
     }, 1300)
   },
   methods: {
+    spinner() {
+      this.$q.loading.show({
+      backgroundColor: 'purple-10',
+      delay: 0
+    })
+    setTimeout(() => {
+      this.$q.loading.hide()
+    }, 1300)
+    },
     toggleWeek() {
       this.week = true;
       this.month = false;
       this.rawData = false;
+      this.spinner();
     },
     toggleMonth() {
       this.week = false;
       this.month = true;
       this.rawData = false;
+      this.spinner();
     },
     toggleRawData() {
       this.week = false;
       this.month = false;
       this.rawData = true;
+      this.spinner();
     }
   }
 }

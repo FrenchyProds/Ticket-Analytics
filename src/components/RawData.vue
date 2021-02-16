@@ -11,13 +11,22 @@
       @request="onRequest"
       binary-state-sort
     >
-      <template v-slot:top-right>
-        <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </template>
+        <template v-slot:top-center>
+            <q-btn
+            color="primary"
+            icon-right="archive"
+            label="Export to csv"
+            no-caps
+            @click="exportTable"
+            />
+        </template>
+        <template v-slot:top-right>
+            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
+            <template v-slot:append>
+                <q-icon name="search" />
+            </template>
+            </q-input>
+        </template>
 
     </q-table>
   </div>
@@ -33,7 +42,7 @@ export default {
         sortBy: 'desc',
         descending: false,
         page: 1,
-        rowsPerPage: 3,
+        rowsPerPage: 10,
         rowsNumber: 10
       },
       columns: [
@@ -46,6 +55,7 @@ export default {
           format: val => `${val}`,
           sortable: true
         },
+        { name: 'id', align: 'center', label: 'Ticket id', field: 'id', sortable: true },
         { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
         { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
         { name: 'carbs', label: 'Carbs (g)', field: 'carbs', sortable: true },
@@ -140,7 +150,31 @@ export default {
         this.loading = false
       }, 1500)
     },
+    exportTable () {
+      // naive encoding to csv format
+      const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
+        this.data.map(row => this.columns.map(col => wrapCsvValue(
+          typeof col.field === 'function'
+            ? col.field(row)
+            : row[col.field === void 0 ? col.name : col.field],
+          col.format
+        )).join(','))
+      ).join('\r\n')
 
+      const status = exportFile(
+        'table-export.csv',
+        content,
+        'text/csv'
+      )
+
+      if (status !== true) {
+        this.$q.notify({
+          message: 'Browser denied file download...',
+          color: 'negative',
+          icon: 'warning'
+        })
+      }
+    },
     // emulate ajax call
     // SELECT * FROM ... WHERE...LIMIT...
     fetchFromServer (startRow, count, filter, sortBy, descending) {

@@ -5,7 +5,7 @@
         <div class="xs-column">
         <q-btn class="q-mb-1" icon="event" round color="primary">
             <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
-                <q-date navigation-min-year-month="2019/07" v-model="startDate">
+                <q-date minimal navigation-min-year-month="2019/07" v-model="startDate">
                     <div class="row items-center justify-end q-gutter-sm">
                         <q-btn label="Cancel" color="primary" flat v-close-popup />
                         <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
@@ -68,107 +68,20 @@ export default {
       startDate: '',
       endDate: '',
       currentDate: '',
-      currentDateMinusWeek: '',
+      currentDateMinus: '',
       totalHours: [],
       dataUrl: 'http://192.168.8.85:8000/dashboard/hourlygrid/',
       paramRoute: '%/week/now',
       series: '',
       empty: true,
-      chartOptions: {
-        chart: {
-            type: 'bar',
-            stacked: true,
-            zoom: {
-                enabled: true,
-                type: 'x',  
-                autoScaleYaxis: true,  
-                zoomedArea: {
-                    fill: {
-                    color: '#90CAF9',
-                    opacity: 0.4
-                    },
-                    stroke: {
-                    color: '#0D47A1',
-                    opacity: 0.4,
-                    width: 1
-                    }
-                }
-            }
-        },
-        colors: ['#054206', '#AF0909'],
-        animations: {
-          enabled: true,
-          easing: 'easeinout',
-          speed: 1000
-        },
-        grid: {
-          show: true,
-          strokeDashArray: 0,
-          xaxis: {
-            lines: {
-              show: true
-            }
-          }
-        },
-        title: {
-          text: 'Hourly Ticket Tracker',
-          align: 'left',
-          style: {
-            color: '#FFF'
-          }
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'vertical',
-            shadeIntensity: 0.5,
-            inverseColors: false,
-            opacityFrom: 1,
-            stops: [0, 100]
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        stroke: {
-          width: 0
-        },
-        xaxis: {
-          type: 'numeric',
-          min: 0,
-          max: 23,
-          tickAmount: 23,
-          tickPlacement: 'on',
-          labels: {
-            style: {
-              colors: '#fff'
-            }
-          }
-        },
-        yaxis: {
-          title: {
-            text: 'Tickets',
-            style: {
-              color: '#FFF'
-            }
-          },
-          labels: {
-            style: {
-              colors: '#fff'
-            }
-          }
-        },
-        tooltip: {
-        }
-      }
+      chartOptions: {}
     }
   },
   mounted() { 
       this.currentDate = new Date()
       this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
-      this.currentDateMinusWeek = date.subtractFromDate(this.currentDate, { days: 30 })
-      this.startDate = date.formatDate(this.currentDateMinusWeek, 'YYYY-MM-DD')
+      this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 30 })
+      this.startDate = date.formatDate(this.currentDateMinus, 'YYYY-MM-DD')
       this.dateStart = this.startDate
       this.paramRoute = '%/' + this.startDate + '/' + this.endDate
       this.fetchData()
@@ -210,7 +123,7 @@ export default {
                             tickAmount: 23,
                             type: 'numeric',
                             label: {
-                              show: true
+                              show: true,
                             }
                           }
                         } 
@@ -233,7 +146,8 @@ export default {
                                 xaxis: {
                                     min: xaxis.min,
                                     max: xaxis.max,
-                                    tickAmount: parseInt(xaxis.max - xaxis.min),
+                                    // tickAmount: parseInt(xaxis.max - xaxis.min),
+                                    tickAmount: 23
                                 }
                             }
                         }
@@ -262,9 +176,18 @@ export default {
                   grid: {
                     show: true,
                     strokeDashArray: 0,
+                    padding: {
+                      left: -0,
+                      right: 0,
+                    },
                     xaxis: {
                       lines: {
-                        show: true
+                        show: false
+                      }
+                    },
+                    yaxis: {
+                      lines: {
+                        show: false
                       }
                     }
                   },
@@ -287,7 +210,7 @@ export default {
                     }
                   },
                   dataLabels: {
-                    enabled: true,
+                    enabled: false,
                   },
                   stroke: {
                     width: 0
@@ -297,6 +220,15 @@ export default {
                     tickAmount: 23,
                     min: 0,
                     max: 23,
+                    tooltip: {
+                      formatter: function(value) {
+                        if(!isNaN(value)) {
+                          return parseInt(value)
+                        } else {
+                          return value.toFixed(0);
+                        }
+                      },
+                    },
                     title: {
                       text: 'Hour of the day',
                       style: {
@@ -306,7 +238,7 @@ export default {
                     axisBorder: {
                       show: true,
                       color: '#78909C',
-                      offsetX: 0,
+                      offsetX: 10,
                       offsetY: 0
                   },
                     axisTicks: {
@@ -318,10 +250,8 @@ export default {
                       show: true,
                       rotateAlways: true,
                       formatter: function(value) {
-                        if(value < 10 && value != 0) {
-                        return "0" + parseInt(value) + ":00"
-                        } else if(value === 0) {
-                          return "00:00"
+                        if(value < 10) {
+                          return "0" + parseInt(value) + ":00"
                         } else {
                           return parseInt(value) + ":00"
                         }
@@ -332,8 +262,20 @@ export default {
                     },
                   },
                   yaxis: {
-                    type: '',
+                    forceNiceScale: true,
                     type: 'numeric',
+                    axisBorder: {
+                      show: true,
+                    },
+                    tooltip: {
+                      formatter: function(value) {
+                        if(!isNaN(value)) {
+                          return parseInt(value)
+                        } else {
+                          return value.toFixed(0);
+                        }
+                      },
+                    },
                     title: {
                       text: 'Tickets',
                       style: {
@@ -346,23 +288,23 @@ export default {
                         colors: '#fff'
                       },
                       formatter: function(value) {
-                        return parseInt(value)
+                        if(!isNaN(value)) {
+                          return parseInt(value)
+                        } else {
+                          return value.toFixed(0);
+                        }
                       },
                     }
                   },
-                  tooltip: {
-                  }
                 }
                 for (let i = 0; i < open.length; i++) {
                   this.series[0].data.push({x: '', y: ''})
                   this.series[0].data[i].x = open[i].hourOpened
-                  // console.log(open[i].hourOpened)
                   this.series[0].data[i].y = open[i].totalOpened
                 }
                 for (let i = 0; i < closed.length; i++) {
                   this.series[1].data.push({x: '', y: ''})
                   this.series[1].data[i].x = closed[i].hourClosed
-                  // console.log(closed[i].hourClosed)
                   this.series[1].data[i].y = closed[i].totalClosed
                 }
                 if(open.length == 0 && closed.length == 0) {
@@ -370,8 +312,10 @@ export default {
                 } else {
                   this.empty = false;
                 }
-                this.series[1].data.push({x: 23, y: 0})
-                console.log(this.series)
+                for(let i = 0; i < 24; i++) {
+                  this.series[0].data.push({x: i, y:0})
+                  this.series[1].data.push({x: i, y:0})
+                }
             })
           } catch (err) {
               console.log(err)
@@ -394,7 +338,6 @@ export default {
       updateStartDate () {
       this.startDate = this.dateStart
     },
-
      save () {
       this.dateStart = this.startDate
       this.dateEnd = date.addToDate(this.startDate, { days: 30 })
@@ -426,16 +369,11 @@ export default {
                         y: ''
                         }]
                     }],
-                    xaxis: {
-                      type: "numeric"
-                    }
                   },
-                  console.log(this.series),
                   this.fetchData(this.paramRoute))
         } catch(err) {
             console.log(err)
         }
-    } 
   },
     onChangeUser: async function() {
          try {
@@ -444,7 +382,7 @@ export default {
             } else {
                 this.userRoute = this.selectedUser
             }
-            this.paramRoute = this.userRoute + '/week/now'
+            this.paramRoute = this.userRoute + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
              this.$axios.post(this.dataUrl + this.paramRoute  , {
                 headers: { 'Content-Type': 'application/json' },
                 crossdomain: true
@@ -464,17 +402,14 @@ export default {
                         y: ''
                         }]
                     }],
-                    xaxis: {
-                      type: "numeric"
-                    }
                   },
-                  console.log(this.series),
                   this.fetchData(this.paramRoute))
         } catch(err) {
             console.log(err)
         }
     } 
   }
+}
 </script>
 
 <style>
