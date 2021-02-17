@@ -78,303 +78,302 @@ export default {
     }
   },
   mounted() { 
-      this.currentDate = new Date()
-      this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
-      this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 30 })
-      this.startDate = date.formatDate(this.currentDateMinus, 'YYYY-MM-DD')
-      this.dateStart = this.startDate
-      this.paramRoute = '%/' + this.startDate + '/' + this.endDate
-      this.fetchData()
+    this.currentDate = new Date()
+    this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
+    this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 30 })
+    this.startDate = date.formatDate(this.currentDateMinus, 'YYYY-MM-DD')
+    this.dateStart = this.startDate
+    this.paramRoute = '%/' + this.startDate + '/' + this.endDate
+    this.fetchData()
   },
   methods: {
-      fetchData: async function() {
-          try {
-            this.$axios.get(this.dataUrl + this.paramRoute , {
-                headers: { 'Content-Type': 'application/json' },
-                crossdomain: true
-                }
-                ).then(res => {
-                const getUsers = res.data.users
-                for (let i = 0; i < getUsers.length; i++) {
-                    this.userList = getUsers
-                    this.users.push(this.userList[i].name)
-                    this.usersId.push(this.userList[i].id)
-                }
-                console.log(res.data)
-                this.series = [{
-                  name: 'Tickets Opened',
-                  data: [{ x: "", y: ""}]
-                }, {
-                  name: 'Tickets Closed',
-                  data: [{ x: "", y: ""}]
-                }],
-                console.log(this.series)
-                let open = res.data.openTickets
-                let closed = res.data.closedTickets
-                this.options = this.users
-                this.chartOptions = {
-                  chart: {
-                    events: {
-                      beforeResetZoom: function() {
-                        return {
-                          xaxis: {
-                            min: 0,
-                            max: 23,
-                            tickAmount: 23,
-                            type: 'numeric',
-                            label: {
-                              show: true,
-                            }
+    fetchData: async function() {
+        try {
+          this.$axios.get(this.dataUrl + this.paramRoute , {
+              headers: { 'Content-Type': 'application/json' },
+              crossdomain: true
+              }
+              ).then(res => {
+              const getUsers = res.data.users
+              for (let i = 0; i < getUsers.length; i++) {
+                  this.userList = getUsers
+                  this.users.push(this.userList[i].name)
+                  this.usersId.push(this.userList[i].id)
+              }
+              console.log(res.data)
+              this.series = [{
+                name: 'Tickets Opened',
+                data: [{ x: "", y: ""}]
+              }, {
+                name: 'Tickets Closed',
+                data: [{ x: "", y: ""}]
+              }],
+              console.log(this.series)
+              let open = res.data.openTickets
+              let closed = res.data.closedTickets
+              this.options = this.users
+              this.chartOptions = {
+                chart: {
+                  events: {
+                    beforeResetZoom: function() {
+                      return {
+                        xaxis: {
+                          min: 0,
+                          max: 23,
+                          tickAmount: 23,
+                          type: 'numeric',
+                          label: {
+                            show: true,
                           }
-                        } 
-                      },
-                      beforeZoom : (e, {xaxis}) => {
-                        let maindifference = 23
-                        let zoomdifference =   xaxis.max - xaxis.min
-                        if( zoomdifference > maindifference )
-                        return  {
-                            // dont zoom out any further
-                            xaxis: {
-                                min: 0,
-                                max: 23,
-                                tickAmount: 23
-                            }
-                        }; 
-                        else {
-                            return {
-                                // keep on zooming
-                                xaxis: {
-                                    min: xaxis.min,
-                                    max: xaxis.max,
-                                    // tickAmount: parseInt(xaxis.max - xaxis.min),
-                                    tickAmount: 23
-                                }
-                            }
                         }
+                      } 
+                    },
+                    beforeZoom : (e, {xaxis}) => {
+                      let maindifference = 23
+                      let zoomdifference =   xaxis.max - xaxis.min
+                      if( zoomdifference > maindifference )
+                      return  {
+                          // dont zoom out any further
+                          xaxis: {
+                              min: 0,
+                              max: 23,
+                              tickAmount: 23
+                          }
+                      }; 
+                      else {
+                          return {
+                              // keep on zooming
+                              xaxis: {
+                                  min: xaxis.min,
+                                  max: xaxis.max,
+                                  // tickAmount: parseInt(xaxis.max - xaxis.min),
+                                  tickAmount: 23
+                              }
+                          }
+                      }
+                  }
+                  },
+                    toolbar: { 
+                      show: true, 
+                      tools: { 
+                        download: true, 
+                        selection: true, 
+                        zoom: true,
+                        zoomin: true, 
+                        zoomout: true, 
+                        pan: true, 
+                        reset: true },
+                    },
+                    type: 'bar',
+                    stacked: true,
+                },
+                colors: ['#054206', '#AF0909'],
+                animations: {
+                  enabled: true,
+                  easing: 'easeinout',
+                  speed: 1000
+                },
+                grid: {
+                  show: true,
+                  strokeDashArray: 0,
+                  padding: {
+                    left: -0,
+                    right: 0,
+                  },
+                  xaxis: {
+                    lines: {
+                      show: false
                     }
-                    },
-                      toolbar: { 
-                        show: true, 
-                        tools: { 
-                          download: true, 
-                          selection: true, 
-                          zoom: true,
-                          zoomin: true, 
-                          zoomout: true, 
-                          pan: true, 
-                          reset: true },
-                      },
-                      type: 'bar',
-                      stacked: true,
                   },
-                  colors: ['#054206', '#AF0909'],
-                  animations: {
-                    enabled: true,
-                    easing: 'easeinout',
-                    speed: 1000
-                  },
-                  grid: {
-                    show: true,
-                    strokeDashArray: 0,
-                    padding: {
-                      left: -0,
-                      right: 0,
-                    },
-                    xaxis: {
-                      lines: {
-                        show: false
+                  yaxis: {
+                    lines: {
+                      show: false
+                    }
+                  }
+                },
+                title: {
+                  text: 'Hourly Ticket Tracker',
+                  align: 'left',
+                  style: {
+                    color: '#FFF'
+                  }
+                },
+                fill: {
+                  type: 'gradient',
+                  gradient: {
+                    shade: 'dark',
+                    type: 'vertical',
+                    shadeIntensity: 0.5,
+                    inverseColors: false,
+                    opacityFrom: 1,
+                    stops: [0, 100]
+                  }
+                },
+                dataLabels: {
+                  enabled: false,
+                },
+                stroke: {
+                  width: 0
+                },
+                xaxis: {
+                  type: 'numeric',
+                  tickAmount: 23,
+                  min: 0,
+                  max: 23,
+                  tooltip: {
+                    formatter: function(value) {
+                      if(!isNaN(value)) {
+                        return parseInt(value)
+                      } else {
+                        return value.toFixed(0);
                       }
                     },
-                    yaxis: {
-                      lines: {
-                        show: false
-                      }
-                    }
                   },
                   title: {
-                    text: 'Hourly Ticket Tracker',
-                    align: 'left',
+                    text: 'Hour of the day',
                     style: {
                       color: '#FFF'
                     }
                   },
-                  fill: {
-                    type: 'gradient',
-                    gradient: {
-                      shade: 'dark',
-                      type: 'vertical',
-                      shadeIntensity: 0.5,
-                      inverseColors: false,
-                      opacityFrom: 1,
-                      stops: [0, 100]
+                  axisBorder: {
+                    show: true,
+                    color: '#78909C',
+                    offsetX: 10,
+                    offsetY: 0
+                },
+                  axisTicks: {
+                    show: true
+                  },
+                  tickPlacement: 'on',
+                  labels: {
+                    showDuplicates: false,
+                    show: true,
+                    rotateAlways: true,
+                    formatter: function(value) {
+                      if(value < 10) {
+                        return "0" + parseInt(value) + ":00"
+                      } else {
+                        return parseInt(value) + ":00"
+                      }
+                    },
+                    style: {
+                      colors: '#fff'
                     }
                   },
-                  dataLabels: {
-                    enabled: false,
+                },
+                yaxis: {
+                  forceNiceScale: true,
+                  type: 'numeric',
+                  axisBorder: {
+                    show: true,
                   },
-                  stroke: {
-                    width: 0
-                  },
-                  xaxis: {
-                    type: 'numeric',
-                    tickAmount: 23,
-                    min: 0,
-                    max: 23,
-                    tooltip: {
-                      formatter: function(value) {
-                        if(!isNaN(value)) {
-                          return parseInt(value)
-                        } else {
-                          return value.toFixed(0);
-                        }
-                      },
-                    },
-                    title: {
-                      text: 'Hour of the day',
-                      style: {
-                        color: '#FFF'
-                      }
-                    },
-                    axisBorder: {
-                      show: true,
-                      color: '#78909C',
-                      offsetX: 10,
-                      offsetY: 0
-                  },
-                    axisTicks: {
-                      show: true
-                    },
-                    tickPlacement: 'on',
-                    labels: {
-                      showDuplicates: false,
-                      show: true,
-                      rotateAlways: true,
-                      formatter: function(value) {
-                        if(value < 10) {
-                          return "0" + parseInt(value) + ":00"
-                        } else {
-                          return parseInt(value) + ":00"
-                        }
-                      },
-                      style: {
-                        colors: '#fff'
+                  tooltip: {
+                    formatter: function(value) {
+                      if(!isNaN(value)) {
+                        return parseInt(value)
+                      } else {
+                        return value.toFixed(0);
                       }
                     },
                   },
-                  yaxis: {
-                    forceNiceScale: true,
-                    type: 'numeric',
-                    axisBorder: {
-                      show: true,
-                    },
-                    tooltip: {
-                      formatter: function(value) {
-                        if(!isNaN(value)) {
-                          return parseInt(value)
-                        } else {
-                          return value.toFixed(0);
-                        }
-                      },
-                    },
-                    title: {
-                      text: 'Tickets',
-                      style: {
-                        color: '#FFF'
-                      }
-                    },
-                    labels: {
-                      showDuplicates: false,
-                      style: {
-                        colors: '#fff'
-                      },
-                      formatter: function(value) {
-                        if(!isNaN(value)) {
-                          return parseInt(value)
-                        } else {
-                          return value.toFixed(0);
-                        }
-                      },
+                  title: {
+                    text: 'Tickets',
+                    style: {
+                      color: '#FFF'
                     }
                   },
-                }
-                for (let i = 0; i < open.length; i++) {
-                  this.series[0].data.push({x: '', y: ''})
-                  this.series[0].data[i].x = open[i].hourOpened
-                  this.series[0].data[i].y = open[i].totalOpened
-                }
-                for (let i = 0; i < closed.length; i++) {
-                  this.series[1].data.push({x: '', y: ''})
-                  this.series[1].data[i].x = closed[i].hourClosed
-                  this.series[1].data[i].y = closed[i].totalClosed
-                }
-                if(open.length == 0 && closed.length == 0) {
-                  this.empty = true;
-                } else {
-                  this.empty = false;
-                }
-                for(let i = 0; i < 24; i++) {
-                  this.series[0].data.push({x: i, y:0})
-                  this.series[1].data.push({x: i, y:0})
-                }
-            })
-          } catch (err) {
-              console.log(err)
-          }
-      },
-
-      filterFn (val, update, abort) {
-        if (val === '') {
-            update(() => {
-            this.users = this.options
-            })
-            return
+                  labels: {
+                    showDuplicates: false,
+                    style: {
+                      colors: '#fff'
+                    },
+                    formatter: function(value) {
+                      if(!isNaN(value)) {
+                        return parseInt(value)
+                      } else {
+                        return value.toFixed(0);
+                      }
+                    },
+                  }
+                },
+              }
+              for (let i = 0; i < open.length; i++) {
+                this.series[0].data.push({x: '', y: ''})
+                this.series[0].data[i].x = open[i].hourOpened
+                this.series[0].data[i].y = open[i].totalOpened
+              }
+              for (let i = 0; i < closed.length; i++) {
+                this.series[1].data.push({x: '', y: ''})
+                this.series[1].data[i].x = closed[i].hourClosed
+                this.series[1].data[i].y = closed[i].totalClosed
+              }
+              if(open.length == 0 && closed.length == 0) {
+                this.empty = true;
+              } else {
+                this.empty = false;
+              }
+              for(let i = 0; i < 24; i++) {
+                this.series[0].data.push({x: i, y:0})
+                this.series[1].data.push({x: i, y:0})
+              }
+          })
+        } catch (err) {
+            console.log(err)
         }
-         update(() => {
+    },
+
+    filterFn (val, update, abort) {
+      if (val === '') {
+        update(() => {
+          this.users = this.options
+        })
+        return
+      }
+      update(() => {
         const needle = val.toLowerCase()
         this.users = this.options.filter(v => v.toLowerCase().indexOf(needle) > -1)
       })
-      },
-
-      updateStartDate () {
-      this.startDate = this.dateStart
     },
-     save () {
+
+    updateStartDate () {
+      this.startDate = this.dateStart
+  },
+    save () {
       this.dateStart = this.startDate
       this.dateEnd = date.addToDate(this.startDate, { days: 30 })
       this.endDate = date.formatDate(this.dateEnd, 'YYYY/MM/DD')
       try {
-            if(!this.selectedUser) {
-                this.userRoute = '%'
-            } else {
-                this.userRoute = this.selectedUser
-            }
-            this.paramRoute = this.userRoute + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
-            console.log(this.paramRoute)
-             this.$axios.post(this.dataUrl + this.paramRoute  , {
-                headers: { 'Content-Type': 'application/json' },
-                crossdomain: true
-                }
-                ).then(
-                  this.chartOptions = {
-                    series: [{
-                      name: 'Tickets Opened',
-                      data: [{
-                        x: '',
-                        y: ''
-                      }]
-                    }, {
-                      name: 'Tickets Closed',
-                      data: [{
-                        x: '',
-                        y: ''
-                        }]
-                    }],
-                  },
-                  this.fetchData(this.paramRoute))
-        } catch(err) {
-            console.log(err)
+        if(!this.selectedUser) {
+            this.userRoute = '%'
+        } else {
+            this.userRoute = this.selectedUser
         }
-  },
+        this.paramRoute = this.userRoute + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
+        this.$axios.post(this.dataUrl + this.paramRoute  , {
+          headers: { 'Content-Type': 'application/json' },
+          crossdomain: true
+          }
+          ).then(
+            this.chartOptions = {
+              series: [{
+                name: 'Tickets Opened',
+                data: [{
+                  x: '',
+                  y: ''
+                }]
+              }, {
+                name: 'Tickets Closed',
+                data: [{
+                  x: '',
+                  y: ''
+                  }]
+              }],
+            },
+            this.fetchData(this.paramRoute))
+      } catch(err) {
+        console.log(err)
+      }
+    },
     onChangeUser: async function() {
          try {
             if(!this.selectedUser) {

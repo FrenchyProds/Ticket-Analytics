@@ -1,217 +1,223 @@
 <template>
   <div class="q-pa-md">
-    <q-table
-      title="Treats"
-      :data="data"
-      :columns="columns"
-      row-key="id"
-      :pagination.sync="pagination"
-      :loading="loading"
-      :filter="filter"
-      @request="onRequest"
-      binary-state-sort
+      <div class="q-gutter-sm">
+          <q-btn label="Toggle Columns" color="primary" @click="modal = true" />
+          <q-dialog v-model="modal">
+            <q-card>
+              <q-card-section class="modalStyle">
+                <q-checkbox dense v-model="visibleColumns" val="ticketId" label="Ticket Id" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="problem" label="Problem Name" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="detail" label="Detail Name" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="company" label="Company Name" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="ticketLevel" label="Ticket Level" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="ticketStatus" label="Ticket Status" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="created" label="Date Created" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="closed" label="Date Closed" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="age" label="Ticket Age (in days)" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="comment" label="Ticket Comment" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="createdBy" label="Created By" /><br />
+                <q-separator/>
+                <q-checkbox dense v-model="visibleColumns" val="closedBy" label="Closed By" /><br />
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+      </div>
+    <q-grid
+    :data="data" 
+    :columns="columns"
+    separator="cell"
+    :global_search="true"
+    file_name="raw_data"
+    :fullscreen="true"
+    :groupby_filter="true"
+    :csv_download="true"
+    :visible_columns="visibleColumns"
+    :columns_filter="true"
+    :pagination.sync="pagination"
     >
-        <template v-slot:top-center>
-            <q-btn
-            color="primary"
-            icon-right="archive"
-            label="Export to csv"
-            no-caps
-            @click="exportTable"
-            />
-        </template>
-        <template v-slot:top-right>
-            <q-input borderless dense debounce="300" v-model="filter" placeholder="Search">
-            <template v-slot:append>
-                <q-icon name="search" />
-            </template>
-            </q-input>
-        </template>
-
-    </q-table>
+    </q-grid>
   </div>
 </template>
 
 <script>
+// #06519C == Blue
+// #42A62A == Green
+import { date } from 'quasar'
+
 export default {
   data () {
     return {
-      filter: '',
-      loading: false,
-      pagination: {
-        sortBy: 'desc',
-        descending: false,
-        page: 1,
-        rowsPerPage: 10,
-        rowsNumber: 10
-      },
-      columns: [
-        {
-          name: 'desc',
-          required: true,
-          label: 'Dessert (100g serving)',
-          align: 'left',
-          field: row => row.name,
-          format: val => `${val}`,
-          sortable: true
+        url: 'http://192.168.8.85:8000/dashboard/rawdata/%/%/%/%/%/%/%/%/%',
+        visibleColumns: ['ticketId', 'problem', 'detail', 'company', 'ticketLevel', 'ticketStatus', 'created', 'closed', 'age', 'comment', 'createdBy', 'closedBy'],
+        pagination: {
+            rowsPerPage: 10,
         },
-        { name: 'id', align: 'center', label: 'Ticket id', field: 'id', sortable: true },
-        { name: 'calories', align: 'center', label: 'Calories', field: 'calories', sortable: true },
-        { name: 'fat', label: 'Fat (g)', field: 'fat', sortable: true },
-        { name: 'carbs', label: 'Carbs (g)', field: 'carbs', sortable: true },
-        { name: 'protein', label: 'Protein (g)', field: 'protein', sortable: true },
-        { name: 'sodium', label: 'Sodium (mg)', field: 'sodium', sortable: true },
-        { name: 'calcium', label: 'Calcium (%)', field: 'calcium', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) },
-        { name: 'iron', label: 'Iron (%)', field: 'iron', sortable: true, sort: (a, b) => parseInt(a, 10) - parseInt(b, 10) }
-      ],
-      data: [],
-      original: [
-        { id: 1, name: 'Frozen Yogurt', calories: 159, fat: 6.0, carbs: 24, protein: 4.0, sodium: 87, calcium: '14%', iron: '1%' },
-        { id: 2, name: 'Ice cream sandwich', calories: 237, fat: 9.0, carbs: 37, protein: 4.3, sodium: 129, calcium: '8%', iron: '1%' },
-        { id: 3, name: 'Eclair', calories: 262, fat: 16.0, carbs: 23, protein: 6.0, sodium: 337, calcium: '6%', iron: '7%' },
-        { id: 4, name: 'Cupcake', calories: 305, fat: 3.7, carbs: 67, protein: 4.3, sodium: 413, calcium: '3%', iron: '8%' },
-        { id: 5, name: 'Gingerbread', calories: 356, fat: 16.0, carbs: 49, protein: 3.9, sodium: 327, calcium: '7%', iron: '16%' },
-        { id: 6, name: 'Jelly bean', calories: 375, fat: 0.0, carbs: 94, protein: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
-        { id: 7, name: 'Lollipop', calories: 392, fat: 0.2, carbs: 98, protein: 0, sodium: 38, calcium: '0%', iron: '2%' },
-        { id: 8, name: 'Honeycomb', calories: 408, fat: 3.2, carbs: 87, protein: 6.5, sodium: 562, calcium: '0%', iron: '45%' },
-        { id: 9, name: 'Donut', calories: 452, fat: 25.0, carbs: 51, protein: 4.9, sodium: 326, calcium: '2%', iron: '22%' },
-        { id: 10, name: 'KitKat', calories: 518, fat: 26.0, carbs: 65, protein: 7, sodium: 54, calcium: '12%', iron: '6%' },
-        { id: 11, name: 'Frozen Yogurt-1', calories: 159, fat: 6.0, carbs: 24, protein: 4.0, sodium: 87, calcium: '14%', iron: '1%' },
-        { id: 12, name: 'Ice cream sandwich-1', calories: 237, fat: 9.0, carbs: 37, protein: 4.3, sodium: 129, calcium: '8%', iron: '1%' },
-        { id: 13, name: 'Eclair-1', calories: 262, fat: 16.0, carbs: 23, protein: 6.0, sodium: 337, calcium: '6%', iron: '7%' },
-        { id: 14, name: 'Cupcake-1', calories: 305, fat: 3.7, carbs: 67, protein: 4.3, sodium: 413, calcium: '3%', iron: '8%' },
-        { id: 15, name: 'Gingerbread-1', calories: 356, fat: 16.0, carbs: 49, protein: 3.9, sodium: 327, calcium: '7%', iron: '16%' },
-        { id: 16, name: 'Jelly bean-1', calories: 375, fat: 0.0, carbs: 94, protein: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
-        { id: 17, name: 'Lollipop-1', calories: 392, fat: 0.2, carbs: 98, protein: 0, sodium: 38, calcium: '0%', iron: '2%' },
-        { id: 18, name: 'Honeycomb-1', calories: 408, fat: 3.2, carbs: 87, protein: 6.5, sodium: 562, calcium: '0%', iron: '45%' },
-        { id: 19, name: 'Donut-1', calories: 452, fat: 25.0, carbs: 51, protein: 4.9, sodium: 326, calcium: '2%', iron: '22%' },
-        { id: 20, name: 'KitKat-1', calories: 518, fat: 26.0, carbs: 65, protein: 7, sodium: 54, calcium: '12%', iron: '6%' },
-        { id: 21, name: 'Frozen Yogurt-2', calories: 159, fat: 6.0, carbs: 24, protein: 4.0, sodium: 87, calcium: '14%', iron: '1%' },
-        { id: 22, name: 'Ice cream sandwich-2', calories: 237, fat: 9.0, carbs: 37, protein: 4.3, sodium: 129, calcium: '8%', iron: '1%' },
-        { id: 23, name: 'Eclair-2', calories: 262, fat: 16.0, carbs: 23, protein: 6.0, sodium: 337, calcium: '6%', iron: '7%' },
-        { id: 24, name: 'Cupcake-2', calories: 305, fat: 3.7, carbs: 67, protein: 4.3, sodium: 413, calcium: '3%', iron: '8%' },
-        { id: 25, name: 'Gingerbread-2', calories: 356, fat: 16.0, carbs: 49, protein: 3.9, sodium: 327, calcium: '7%', iron: '16%' },
-        { id: 26, name: 'Jelly bean-2', calories: 375, fat: 0.0, carbs: 94, protein: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
-        { id: 27, name: 'Lollipop-2', calories: 392, fat: 0.2, carbs: 98, protein: 0, sodium: 38, calcium: '0%', iron: '2%' },
-        { id: 28, name: 'Honeycomb-2', calories: 408, fat: 3.2, carbs: 87, protein: 6.5, sodium: 562, calcium: '0%', iron: '45%' },
-        { id: 29, name: 'Donut-2', calories: 452, fat: 25.0, carbs: 51, protein: 4.9, sodium: 326, calcium: '2%', iron: '22%' },
-        { id: 30, name: 'KitKat-2', calories: 518, fat: 26.0, carbs: 65, protein: 7, sodium: 54, calcium: '12%', iron: '6%' },
-        { id: 31, name: 'Frozen Yogurt-3', calories: 159, fat: 6.0, carbs: 24, protein: 4.0, sodium: 87, calcium: '14%', iron: '1%' },
-        { id: 32, name: 'Ice cream sandwich-3', calories: 237, fat: 9.0, carbs: 37, protein: 4.3, sodium: 129, calcium: '8%', iron: '1%' },
-        { id: 33, name: 'Eclair-3', calories: 262, fat: 16.0, carbs: 23, protein: 6.0, sodium: 337, calcium: '6%', iron: '7%' },
-        { id: 34, name: 'Cupcake-3', calories: 305, fat: 3.7, carbs: 67, protein: 4.3, sodium: 413, calcium: '3%', iron: '8%' },
-        { id: 35, name: 'Gingerbread-3', calories: 356, fat: 16.0, carbs: 49, protein: 3.9, sodium: 327, calcium: '7%', iron: '16%' },
-        { id: 36, name: 'Jelly bean-3', calories: 375, fat: 0.0, carbs: 94, protein: 0.0, sodium: 50, calcium: '0%', iron: '0%' },
-        { id: 37, name: 'Lollipop-3', calories: 392, fat: 0.2, carbs: 98, protein: 0, sodium: 38, calcium: '0%', iron: '2%' },
-        { id: 38, name: 'Honeycomb-3', calories: 408, fat: 3.2, carbs: 87, protein: 6.5, sodium: 562, calcium: '0%', iron: '45%' },
-        { id: 39, name: 'Donut-3', calories: 452, fat: 25.0, carbs: 51, protein: 4.9, sodium: 326, calcium: '2%', iron: '22%' },
-        { id: 40, name: 'KitKat-3', calories: 518, fat: 26.0, carbs: 65, protein: 7, sodium: 54, calcium: '12%', iron: '6%' }
-      ]
+        modal: false,
+        columns: [
+        {
+            name: 'ticketId',
+            required: true,
+            label: 'Ticket Id',
+            align: 'left',
+            field: 'id',
+            sortable: true,
+        },
+        {
+            name: 'problem',
+            align: 'center',
+            label: 'Problem Name',
+            field: 'problem',
+            sortable: true,
+            grouping: true
+        },
+        {
+            name: 'detail', 
+            label: 'Detail Name', 
+            field: 'detail', 
+            sortable: true, 
+            grouping: true
+        },
+        {
+            name: 'company', 
+            label: 'Company Name', 
+            field: 'company', 
+            sortable: true, 
+            grouping: true
+        },
+        {
+            name: 'ticketLevel', 
+            label: 'Ticket Level', 
+            field: 'ticketLevel',
+            grouping: true
+        },
+        {
+            name: 'ticketStatus', 
+            label: 'Ticket Status', 
+            field: 'ticketStatus',
+            sortable: true,
+            grouping: true,
+            classes: ''
+        },
+        {
+            name: 'created',
+            label: 'Date Created',
+            field: 'created',
+            sortable: true,
+            sort: (a, b) => parseInt(a, 10) - parseInt(b, 10),
+        },
+        {
+            name: 'closed',
+            label: 'Date Closed',
+            field: 'closed',
+            sortable: true,
+            sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
+        },
+        {
+            name: 'age',
+            label: 'Ticket Age',
+            field: 'age',
+            sortable: true
+        },
+        {
+            name: 'comment',
+            label: 'Ticket Comment',
+            field: 'comment',
+            sortable: false,
+            style: 'max-width: 300px; overflowX: scroll; word-break: break;',
+            align: 'left',
+        },
+        {
+            name: 'createdBy',
+            label: 'Created By',
+            field: 'createdBy',
+            sortable: true,
+            grouping: true
+        },
+        {
+            name: 'closedBy',
+            label: 'Closed By',
+            field: 'closedBy',
+            sortable: true,
+            grouping: true
+        }
+    ],
+    data: []
     }
   },
-  mounted () {
-    // get initial data from server (1st page)
-    this.onRequest({
-      pagination: this.pagination,
-      filter: undefined
-    })
+  mounted() {
+    this.fetchData();
   },
   methods: {
-    onRequest (props) {
-      const { page, rowsPerPage, sortBy, descending } = props.pagination
-      const filter = props.filter
-
-      this.loading = true
-
-      // emulate server
-      setTimeout(() => {
-        // update rowsCount with appropriate value
-        this.pagination.rowsNumber = this.getRowsNumberCount(filter)
-
-        // get all rows if "All" (0) is selected
-        const fetchCount = rowsPerPage === 0 ? this.pagination.rowsNumber : rowsPerPage
-
-        // calculate starting row of data
-        const startRow = (page - 1) * rowsPerPage
-
-        // fetch data from "server"
-        const returnedData = this.fetchFromServer(startRow, fetchCount, filter, sortBy, descending)
-
-        // clear out existing data and add new
-        this.data.splice(0, this.data.length, ...returnedData)
-
-        // don't forget to update local pagination object
-        this.pagination.page = page
-        this.pagination.rowsPerPage = rowsPerPage
-        this.pagination.sortBy = sortBy
-        this.pagination.descending = descending
-
-        // ...and turn of loading indicator
-        this.loading = false
-      }, 1500)
-    },
-    exportTable () {
-      // naive encoding to csv format
-      const content = [ this.columns.map(col => wrapCsvValue(col.label)) ].concat(
-        this.data.map(row => this.columns.map(col => wrapCsvValue(
-          typeof col.field === 'function'
-            ? col.field(row)
-            : row[col.field === void 0 ? col.name : col.field],
-          col.format
-        )).join(','))
-      ).join('\r\n')
-
-      const status = exportFile(
-        'table-export.csv',
-        content,
-        'text/csv'
-      )
-
-      if (status !== true) {
-        this.$q.notify({
-          message: 'Browser denied file download...',
-          color: 'negative',
-          icon: 'warning'
-        })
+      getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+      },
+      fetchData() {
+          try {
+            this.$axios.get(this.url, {
+                headers: { 'Content-Type': 'application/json' },
+                crossdomain: true
+            }).then(res => {
+                let newDate = new Date()
+                let createdDate = date.subtractFromDate(newDate, { days: 15 })
+                createdDate = date.formatDate(createdDate, 'DD-MM-YYYY')
+                let closedDate = date.subtractFromDate(newDate, { days: 5 })
+                closedDate = date.formatDate(closedDate, 'DD-MM-YYYY')
+                let fetchData = res.data.response
+                for (let i = 0; i < fetchData.length; i++) {
+                    this.data.push({
+                        id: fetchData[i].ticketId,
+                        problem: fetchData[i].problemName,
+                        detail: fetchData[i].detailName,
+                        company: fetchData[i].companyName,
+                        ticketLevel: fetchData[i].ticketLevel,
+                        ticketStatus: fetchData[i].ticketStatus,
+                        created: createdDate,
+                        createdBy: fetchData[i].createdBy,
+                        closed: closedDate,
+                        closedBy: fetchData[i].closedBy,
+                        age: closedDate - createdDate,
+                        comment: fetchData[i].ticketSubject
+                    })
+                }
+                console.log(this.data)
+            })
+          } catch (error) {
+              console.log(error)
+          }
       }
-    },
-    // emulate ajax call
-    // SELECT * FROM ... WHERE...LIMIT...
-    fetchFromServer (startRow, count, filter, sortBy, descending) {
-      const data = filter
-        ? this.original.filter(row => row.name.includes(filter))
-        : this.original.slice()
-
-      // handle sortBy
-      if (sortBy) {
-        const sortFn = sortBy === 'desc'
-          ? (descending
-            ? (a, b) => (a.name > b.name ? -1 : a.name < b.name ? 1 : 0)
-            : (a, b) => (a.name > b.name ? 1 : a.name < b.name ? -1 : 0)
-          )
-          : (descending
-            ? (a, b) => (parseFloat(b[sortBy]) - parseFloat(a[sortBy]))
-            : (a, b) => (parseFloat(a[sortBy]) - parseFloat(b[sortBy]))
-          )
-        data.sort(sortFn)
-      }
-
-      return data.slice(startRow, startRow + count)
-    },
-
-    // emulate 'SELECT count(*) FROM ...WHERE...'
-    getRowsNumberCount (filter) {
-      if (!filter) {
-        return this.original.length
-      }
-      let count = 0
-      this.original.forEach((treat) => {
-        if (treat.name.includes(filter)) {
-          ++count
-        }
-      })
-      return count
-    }
   }
 }
 </script>
+
+<style lang="scss">
+
+    .q-table .openTicket {
+        background-color: lightgreen;
+    }
+    .q-table .closedTicket {
+        background-color: lightcoral;
+    }
+
+    .modalStyle {
+        padding-left: 2rem;
+        & .q-checkbox__inner {
+            margin-right: 0.5rem;
+        }
+        & .q-checkbox__label {
+            line-height: 1.5;
+            padding: 0.3rem 0rem;
+        } 
+    }
+
+
+</style> 

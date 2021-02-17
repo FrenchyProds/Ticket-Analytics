@@ -167,7 +167,7 @@ export default {
                       type: 'bar',
                       stacked: true,
                   },
-                  colors: ['#054206', '#AF0909'],
+                  colors: ['#42A62A', '#de1d1d'],
                   animations: {
                     enabled: true,
                     easing: 'easeinout',

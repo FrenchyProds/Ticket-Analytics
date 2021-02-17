@@ -1,20 +1,20 @@
 <template>
-  <q-page class="container" style="background: #343E59;">
-      <q-header elevated class="shadow-8 full-width row wrap bg-custom-blue-dark justify-center">
-        <q-toolbar class="bg-custom-blue-dark">
+  <q-page class="container" style="background: #06519C;">
+      <q-header elevated class="shadow-8 full-width row wrap bg custom-color justify-center">
+        <q-toolbar class="bg custom-color">
             <q-toolbar-title class="absolute-center">
             Analytics Dashboard
             </q-toolbar-title>
             <q-btn
             class="absolute-right"
-            style="background: #36384c"
+            style="background: #06519C"
             @click="$q.fullscreen.toggle()"
             :icon="$q.fullscreen.isActive ? 'fas fa-compress' : 'fas fa-expand'"
             />
         </q-toolbar>
         <q-tabs
             v-model="tab"
-            class="text-teal "
+            class="text custom-green"
         >
             <q-tab @click="toggleWeek()" v-model="week" name="weekly" label="Weekly" />
             <q-tab @click="toggleMonth()" v-model="month" name="monthly" label="Monthly" />
@@ -130,10 +130,10 @@ export default {
       loading: true,
       dialog: true,
       colors: [
-        'linear-gradient( 135deg, #ABDCFF 10%, #0396FF 100%)',
-        'linear-gradient( 135deg, #2AFADF 10%, #4C83FF 100%)',
-        'linear-gradient( 135deg, #FFD3A5 10%, #FD6585 100%)',
-        'linear-gradient( 135deg, #EE9AE5 10%, #5961F9 100%)'
+        'linear-gradient( 135deg, #06519C 10%, #0358ad 100%)',
+        'linear-gradient( 135deg, #0b5db0 10%, #0662bf 100%)',
+        'linear-gradient( 135deg, #0f67bf 10%, #066bd1 100%)',
+        'linear-gradient( 135deg, #0d6fd1 10%, #0774e3 100%)'
       ],
       tab: 'weekly'
     }
@@ -178,3 +178,9 @@ export default {
   }
 }
 </script>
+
+<style>
+.custom-green {
+  color: white;
+}
+</style>
