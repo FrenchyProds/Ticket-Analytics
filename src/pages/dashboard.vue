@@ -41,12 +41,12 @@
             <DailyTicketTracker></DailyTicketTracker>
           </card-base>
         </div>
-        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <apex-donut></apex-donut>
+            <WeeklyCompanyGraph></WeeklyCompanyGraph>
           </card-base>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
             <apex-line></apex-line>
           </card-base>
@@ -79,12 +79,12 @@
             <DailyTicketTrackerMonthly></DailyTicketTrackerMonthly>
           </card-base>
         </div>
-        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <apex-donut></apex-donut>
+            <MonthlyCompanyGraph></MonthlyCompanyGraph>
           </card-base>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
             <apex-line></apex-line>
           </card-base>
@@ -121,6 +121,8 @@ export default {
     DailyTicketTracker: () => import('components/DailyTicketTracker'),
     DailyTicketTrackerMonthly: () => import('components/DailyTicketTrackerMonthly'),
     RawData: () => import('components/RawData'),
+    WeeklyCompanyGraph: () => import('components/WeeklyCompanyGraph'),
+    MonthlyCompanyGraph: () => import('components/MonthlyCompanyGraph'),
   },
   data () {
     return {
@@ -130,10 +132,10 @@ export default {
       loading: true,
       dialog: true,
       colors: [
-        'linear-gradient( 135deg, #06519C 10%, #0358ad 100%)',
-        'linear-gradient( 135deg, #0b5db0 10%, #0662bf 100%)',
-        'linear-gradient( 135deg, #0f67bf 10%, #066bd1 100%)',
-        'linear-gradient( 135deg, #0d6fd1 10%, #0774e3 100%)'
+        'linear-gradient( 135deg, #06519C 10%, #06519C 100%)',
+        'linear-gradient( 135deg, #06519C 10%, #06519C 100%)',
+        'linear-gradient( 135deg, #06519C 10%, #06519C 100%)',
+        'linear-gradient( 135deg, #06519C 10%, #06519C 100%)'
       ],
       tab: 'weekly'
     }

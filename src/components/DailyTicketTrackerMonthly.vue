@@ -1,26 +1,26 @@
 <template>
     <div>
-      <p class="chartTitle">Tickets opened and closed every hour over a certain period</p>
+      <p class="chartTitle">Tickets opened and closed every hour - Monthly</p>
         <q-toolbar class="text-center">
         <div class="xs-column">
-        <q-btn class="q-mb-1" icon="event" round color="primary">
-            <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
-                <q-date minimal navigation-min-year-month="2019/07" v-model="startDate">
-                    <div class="row items-center justify-end q-gutter-sm">
-                        <q-btn label="Cancel" color="primary" flat v-close-popup />
-                        <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                    </div>
-                </q-date>
-            </q-popup-proxy>
-        </q-btn>
-        <div class="flex content-between column-xs-sm row-md-lg-xl">
-        <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
-        
-        <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+          <q-btn class="q-mb-1" icon="event" round color="primary">
+              <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
+                  <q-date minimal navigation-min-year-month="2019/07" v-model="startDate">
+                      <div class="row items-center justify-end q-gutter-sm">
+                          <q-btn label="Cancel" color="primary" flat v-close-popup />
+                          <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                      </div>
+                  </q-date>
+              </q-popup-proxy>
+          </q-btn>
+          <div class="flex content-between column-xs-sm row-md-lg-xl">
+          <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+          
+          <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
         </div>
         </div>
         </q-toolbar>
-        <q-select label-color="white" @input="onChangeUser()" v-model="selectedUser" use-input input-debounce="0" label="Users" @filter="filterFn" :options="users">
+        <q-select label-color="white" outlined @input="onChangeUser()" v-model="selectedUser" use-input input-debounce="0" label="Users" @filter="filterFn" :options="users">
             <template v-slot:no-option>
                 <q-item>
                     <q-item-section class="text-grey">
@@ -52,7 +52,7 @@
 import { date } from 'quasar'
 import CardBase from 'components/CardBase'
 export default {
-  name: 'DailyTicketTracker',
+  name: 'DailyTicketTrackerMonthly',
   components: {
     CardBase,
   },
@@ -165,7 +165,6 @@ export default {
                         reset: true },
                     },
                     type: 'bar',
-                    stacked: true,
                 },
                 colors: ['#42A62A', '#f44336'],
                 animations: {

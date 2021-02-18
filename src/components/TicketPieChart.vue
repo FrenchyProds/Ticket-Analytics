@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="chartTitle">Total open and closed tickets at current date</p>
+        <p class="chartTitle">Total open and closed tickets on {{currentDate}}</p>
         <form method="get" name="selectProblem">
             <select v-model="selectedProblem" @change="onChange()" class="problems" name="problems">
                 <option selected value="All">All</option>
@@ -24,6 +24,8 @@
 
 <script>
 
+import { date } from 'quasar'
+
 export default {
   name: 'ticketPieChart',
   data () {
@@ -37,6 +39,7 @@ export default {
         routeDetail: '',
         openTickets: 0,
         closedTickets: 0,
+        currentDate: '',
         dataUrl: 'http://192.168.8.85:8000/dashboard/ticketpiechart/',
         chartOptions: {
             chart: {
@@ -77,6 +80,8 @@ export default {
 },
   mounted () {
       this.fetchData()
+      this.currentDate = new Date();
+    //   this.currentDate = date.formatDate(this.currentDate, 'dddd DDth of MMM YYYY at HH:mm')
   },
   methods: {
       fetchData: async function() {
@@ -168,7 +173,7 @@ export default {
                         },
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
-                        colors: ['#054206', '#AF0909'],
+                        colors: ['#42A62A', '#f44336'],
                         responsive: [{
                         breakpoint: 480,
                         options: {
@@ -225,7 +230,7 @@ export default {
                         },
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
-                        colors: ['#054206', '#AF0909'],
+                        colors: ['#42A62A', '#f44336'],
                         responsive: [{
                         breakpoint: 480,
                         options: {

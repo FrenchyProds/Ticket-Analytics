@@ -1,0 +1,43 @@
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.logo {
+    width: 50vw;
+}
+
+.nav {
+  display: flex;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+}
+
+@media (max-width: 600px) {
+  .logo {
+    width: 40%;
+    flex-grow: 1;
+    max-width: 30vw;
+  }
+  nav {
+    width: 100%;
+    order: 2;
+    flex-grow: 0;
+    justify-content: space-between;
+  }
+  .nav {
+      min-width: 50vw;
+  }
+
+  .register {
+    order: 1;
+    display: flex;
+    min-width: 30vw;
+    justify-content: flex-end;
+  }
+}

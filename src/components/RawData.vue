@@ -191,13 +191,13 @@ export default {
                         problem: fetchData[i].problemName,
                         detail: fetchData[i].detailName,
                         company: fetchData[i].companyName,
-                        ticketLevel: fetchData[i].ticketLevel,
+                        ticketLevel: 'Level ' + fetchData[i].ticketLevel,
                         ticketStatus: fetchData[i].ticketStatus,
                         created: createdDate,
                         createdBy: fetchData[i].createdBy,
                         closed: closedDate,
                         closedBy: fetchData[i].closedBy,
-                        age: closedDate - createdDate,
+                        age: closedDate - createdDate + ' = closedDate - createdDate',
                         comment: fetchData[i].ticketSubject
                     })
                 }

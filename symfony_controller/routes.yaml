@@ -1,0 +1,297 @@
+#DefaultController
+#index__:
+#    path: /{_locale}
+#    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+#    defaults:
+#        path: /en
+#        permanent: true
+#    requirements:
+#        _locale: fr|en
+
+root1:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /fr/index
+        permanent: true
+    requirements:
+        _locale: fr|en
+
+root:
+    path: /{_locale}
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /fr/index
+        permanent: true
+    requirements:
+        _locale: fr|en
+
+index:
+    path: /{_locale}/index
+    controller: App\Controller\DefaultController::index
+    requirements:
+        _locale: fr|en
+
+indexopen:
+    path: /{_locale}/index/open
+    controller: App\Controller\DefaultController::open
+    requirements:
+        _locale: fr|en
+
+indexclose:
+    path: /{_locale}/index/close
+    controller: App\Controller\DefaultController::close
+    requirements:
+        _locale: fr|en
+
+companyfilter:
+    path: /{_locale}/company/{company}
+    controller: App\Controller\DefaultController::companyfilter
+    requirements:
+        _locale: fr|en
+    methods:  [GET]
+
+
+#RegisterController
+signin:
+    path: /{_locale}/signin
+    controller: App\Controller\RegisterController::signin
+    requirements:
+        _locale: fr|en
+
+signup:
+    path: /{_locale}/signup
+    controller: App\Controller\RegisterController::signup
+    requirements:
+        _locale: fr|en
+
+logout:
+    path: /logout
+    controller: App\Controller\RegisterController::logout
+    requirements:
+        _locale: fr|en
+
+profile:
+    path: /{_locale}/profile
+    controller: App\Controller\RegisterController::profile
+    requirements:
+        _locale: fr|en
+
+password:
+    path: /{_locale}/change/password
+    controller: App\Controller\RegisterController::password
+    requirements:
+        _locale: fr|en
+
+problems:
+    path: /{_locale}/problems
+    controller: App\Controller\RegisterController::problems
+    requirements:
+        _locale: fr|en
+
+problemsadd:
+    path: /{_locale}/problems/add
+    controller: App\Controller\RegisterController::addproblems
+    requirements:
+        _locale: fr|en
+
+problemsupdate:
+    path: /{_locale}/problems/update/{id}
+    controller: App\Controller\RegisterController::updateproblems
+    requirements:
+        _locale: fr|en
+
+problemdetail:
+    path: /{_locale}/problemdetail
+    controller: App\Controller\RegisterController::problemdetail
+    requirements:
+        _locale: fr|en
+
+problemdetailadd:
+    path: /{_locale}/problemdetail/add
+    controller: App\Controller\RegisterController::addproblemdetail
+    requirements:
+        _locale: fr|en
+
+problemdetailupdate:
+    path: /{_locale}/problemdetail/update/{id}
+    controller: App\Controller\RegisterController::updateproblemdetail
+    requirements:
+        _locale: fr|en
+
+privileges:
+    path: /{_locale}/privileges
+    controller: App\Controller\RegisterController::privileges
+    requirements:
+        _locale: fr|en
+
+privilegesadd:
+    path: /{_locale}/privileges/add
+    controller: App\Controller\RegisterController::addprivileges
+    requirements:
+        _locale: fr|en
+
+privilegesupdate:
+    path: /{_locale}/privileges/update/{id}
+    controller: App\Controller\RegisterController::updateprivileges
+    requirements:
+        _locale: fr|en
+
+users:
+    path: /{_locale}/users
+    controller: App\Controller\RegisterController::users
+    requirements:
+        _locale: fr|en
+
+updateuser:
+    path: /{_locale}/users/update/{id}
+    controller: App\Controller\RegisterController::updateuser
+    requirements:
+        _locale: fr|en
+
+passworduser:
+    path: /{_locale}/users/password/{id}
+    controller: App\Controller\RegisterController::forgot
+    requirements:
+        _locale: fr|en
+
+addusersprivileges:
+    path: /{_locale}/users/privileges/{id}
+    controller: App\Controller\RegisterController::addusersprivileges
+    requirements:
+        _locale: fr|en
+
+roles:
+    path: /{_locale}/roles
+    controller: App\Controller\RegisterController::roles
+    requirements:
+        _locale: fr|en
+
+rolesadd:
+    path: /{_locale}/roles/add
+    controller: App\Controller\RegisterController::addroles
+    requirements:
+        _locale: fr|en
+
+rolesupdate:
+    path: /{_locale}/roles/update/{id}
+    controller: App\Controller\RegisterController::updateroles
+    requirements:
+        _locale: fr|en
+
+
+
+account:
+    path: /{_locale}/accounts
+    controller: App\Controller\RegisterController::account
+    requirements:
+        _locale: fr|en
+
+addaccount:
+    path: /{_locale}/account/add
+    controller: App\Controller\RegisterController::addaccount
+    requirements:
+        _locale: fr|en
+
+accountupdate:
+    path: /{_locale}/account/update/{custinfouid}
+    controller: App\Controller\RegisterController::updateaccount
+    requirements:
+        _locale: fr|en
+
+
+
+escalation:
+    path: /{_locale}/escalation
+    controller: App\Controller\RegisterController::escalation
+    requirements:
+        _locale: fr|en
+
+addescalation:
+    path: /{_locale}/escalation/add
+    controller: App\Controller\RegisterController::addescalation
+    requirements:
+        _locale: fr|en
+
+escalationupdate:
+    path: /{_locale}/escalation/update/{escalationuid}
+    controller: App\Controller\RegisterController::updateescalation
+    requirements:
+        _locale: fr|en
+
+
+#TicketController
+ajaxGetData:
+    path: /ajax
+    controller: App\Controller\TicketController::ajaxGetData
+    requirements:
+        _locale: fr|en
+
+ticketsall:
+    path: /{_locale}/tickets/all
+    controller: App\Controller\TicketController::ticketsall
+    requirements:
+        _locale: fr|en
+
+createticket:
+    path: /{_locale}/tickets/create
+    controller: App\Controller\TicketController::createticket
+    requirements:
+        _locale: fr|en
+
+updateticket:
+    path: /{_locale}/tickets/update/{ticketuid}
+    controller: App\Controller\TicketController::updateticket
+    requirements:
+        _locale: fr|en
+
+
+# ANALTYICS CONTROLLERS
+
+rawdata:
+    path: /dashboard/rawdata
+    controller: App\Controller\AnalyticsController::rawData
+
+ticketPieChart:
+    path: /dashboard/ticketpiechart/{problemName}/{detailName}
+    controller: App\Controller\AnalyticsController::ticketPieChart
+    defaults:
+        problemName: 'all'
+        detailName: 'all'
+    requirements:
+        _locale: fr|en
+
+hourlyGrid:
+    path: /dashboard/hourlygrid/{user}/{startDate}/{endDate}
+    controller: App\Controller\AnalyticsController::hourlyGrid
+    defaults:
+        user: '%'
+        startDate: 'week'
+        endDate: 'now'
+
+companyGraph:
+    path: /dashboard/companyGraph/{problemName}/{detailName}/{companyName}/{ticketStatus}/{startDate}/{endDate}
+    controller: App\Controller\AnalyticsController::companyGraph
+    defaults:
+        problemName: '%'
+        detailName: '%'
+        companyName: '%'
+        ticketStatus: '%'
+        startDate: 'week'
+        endDate: 'now'
+    requirements:
+        _locale: fr|en
+
+dailyTicketTracker:
+    path: /dashboard/dailyTicketTracker
+    controller: App\Controller\AnalyticsController::dailyTicketTracker
+    requirements:
+        _locale: fr|en
+
+employeePerformanceTracker:
+    path: /dashboard/employeePerformanceTracker
+    controller: App\Controller\AnalyticsController::employeePerformanceTracker
+    requirements:
+        _locale: fr|en
+
+
