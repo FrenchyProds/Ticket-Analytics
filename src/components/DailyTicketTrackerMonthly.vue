@@ -95,20 +95,20 @@ export default {
               }
               ).then(res => {
               const getUsers = res.data.users
-              for (let i = 0; i < getUsers.length; i++) {
+              if(this.users.length === 0) {
+                for (let i = 0; i < getUsers.length; i++) {
                   this.userList = getUsers
                   this.users.push(this.userList[i].name)
                   this.usersId.push(this.userList[i].id)
+                }
               }
-              console.log(res.data)
               this.series = [{
                 name: 'Tickets Opened',
                 data: [{ x: "", y: ""}]
               }, {
                 name: 'Tickets Closed',
                 data: [{ x: "", y: ""}]
-              }],
-              console.log(this.series)
+              }]
               let open = res.data.openTickets
               let closed = res.data.closedTickets
               this.options = this.users
@@ -167,7 +167,7 @@ export default {
                     type: 'bar',
                     stacked: true,
                 },
-                colors: ['#054206', '#AF0909'],
+                colors: ['#42A62A', '#f44336'],
                 animations: {
                   enabled: true,
                   easing: 'easeinout',

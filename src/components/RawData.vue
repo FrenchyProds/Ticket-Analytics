@@ -1,33 +1,38 @@
 <template>
   <div class="q-pa-md">
-      <div class="q-gutter-sm">
-          <q-btn label="Toggle Columns" color="primary" @click="modal = true" />
+      <div class="q-gutter-sm center">
+          <div class="row customRowPosition justify-center items-center">
+          <q-btn  label="Toggle Columns" color="primary" @click="modal = true" class="buttonStyle customButtonPosition center" />
+          </div>
           <q-dialog v-model="modal">
             <q-card>
-              <q-card-section class="modalStyle">
-                <q-checkbox dense v-model="visibleColumns" val="ticketId" label="Ticket Id" /><br />
+              <q-card-section class="modalStyle column justify-center">
+                <q-btn icon="dangerous" color="red" class="row justify-center items-center" @click="modal = false"/>
+                <q-checkbox dense v-model="visibleColumns" val="problem" label="Problem Name" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="problem" label="Problem Name" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="detail" label="Detail Name" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="detail" label="Detail Name" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="company" label="Company Name" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="company" label="Company Name" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="ticketLevel" label="Ticket Level" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="ticketLevel" label="Ticket Level" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="ticketStatus" label="Ticket Status" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="ticketStatus" label="Ticket Status" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="created" label="Date Created" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="created" label="Date Created" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="closed" label="Date Closed" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="closed" label="Date Closed" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="age" label="Ticket Age (in days)" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="age" label="Ticket Age (in days)" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="comment" label="Ticket Comment" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="comment" label="Ticket Comment" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="createdBy" label="Created By" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="createdBy" label="Created By" /><br />
+                <q-checkbox dense v-model="visibleColumns" val="closedBy" label="Closed By" />
                 <q-separator/>
-                <q-checkbox dense v-model="visibleColumns" val="closedBy" label="Closed By" /><br />
+                <q-btn icon="delete" class="row justify-center items-center" color="secondary" @click="removeColumns" label="Remove All Columns" />
+                <q-btn icon="settings_backup_restore" class="row justify-center items-center" color="primary" @click="resetColumns" label="Reset Columns" />
+                <q-separator/>
               </q-card-section>
             </q-card>
           </q-dialog>
@@ -57,8 +62,9 @@ import { date } from 'quasar'
 export default {
   data () {
     return {
-        url: 'http://192.168.8.85:8000/dashboard/rawdata/%/%/%/%/%/%/%/%/%',
+        url: 'http://192.168.8.85:8000/dashboard/rawdata',
         visibleColumns: ['ticketId', 'problem', 'detail', 'company', 'ticketLevel', 'ticketStatus', 'created', 'closed', 'age', 'comment', 'createdBy', 'closedBy'],
+        reset: '',
         pagination: {
             rowsPerPage: 10,
         },
@@ -92,7 +98,7 @@ export default {
             label: 'Company Name', 
             field: 'company', 
             sortable: true, 
-            grouping: true
+            grouping: true,
         },
         {
             name: 'ticketLevel', 
@@ -158,6 +164,12 @@ export default {
     this.fetchData();
   },
   methods: {
+      resetColumns() {
+          this.visibleColumns = ['ticketId', 'problem', 'detail', 'company', 'ticketLevel', 'ticketStatus', 'created', 'closed', 'age', 'comment', 'createdBy', 'closedBy'];
+      },
+      removeColumns() {
+          this.visibleColumns = ['ticketId'];
+      },
       getRandomInt(max) {
         return Math.floor(Math.random() * Math.floor(max));
       },
@@ -189,7 +201,6 @@ export default {
                         comment: fetchData[i].ticketSubject
                     })
                 }
-                console.log(this.data)
             })
           } catch (error) {
               console.log(error)
@@ -208,8 +219,43 @@ export default {
         background-color: lightcoral;
     }
 
+    @media (min-width: 768px) {
+        .customRowPosition {
+            display: block;
+        }
+        .customButtonPosition {
+            position: relative;
+            top: 8vh;
+            z-index: 1;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .customButtonPosition {
+            top: 7vh;
+        }
+    }
+
+    @media (min-width: 1440px) {
+        .customButtonPosition {
+            top: 5.5vh;
+        }
+    }
+
+    @media (min-width: 2560px) {
+        .customButtonPosition {
+            top: 3.7vh;
+        }
+    }
+
     .modalStyle {
+        & .q-btn {
+            margin-bottom: 0.5rem;
+        }
         padding-left: 2rem;
+        & .q-checkbox--dense {
+            margin-bottom: 0.3rem;
+        }
         & .q-checkbox__inner {
             margin-right: 0.5rem;
         }

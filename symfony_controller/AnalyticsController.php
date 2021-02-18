@@ -42,13 +42,25 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-    #[Route('/dashboard/rawData/{problemName}/{detailName}/{companyName}/{employeeName}/{employeeStatus}/{ticketLevel}/{ticketStatus}/{startDate}/{endDate}')]
+    // ticket id, ticket age, comment, status
+
+    #[Route('/dashboard/rawdata')]
     public function rawData(Request $request) {
         $req = $this->getDoctrine()->getManager();
 
-        $fetchData = $req->createQuery(
-            'SELECT * FROM *'
-        );
+        $fetchData =
+            'SELECT p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, u.name AS createdBy, u.employe AS employeeStatus, t.id AS ticketId, ts.name AS ticketStatus, t.level AS ticketLevel, t.subject AS ticketSubject, (SELECT uu.name FROM ticket_history tth, users uu WHERE tth.user = uu.id AND tth.ticketstatus = 2 AND th.ticket = tth.ticket GROUP BY tth.ticket) AS closedBy
+                FROM problem p, problem_detail pd, cust_info ci, users u, ticket t, ticket_status ts, level l, ticket_history th
+                    WHERE t.problem = p.id AND t.problemdetail = pd.id AND t.custinfo = ci.id AND u.id = t.user AND t.ticketstatus = ts.id AND t.level = l.id AND th.ticket = t.id GROUP BY th.ticket'
+        ;
+        $res = $req->getConnection()->prepare($fetchData);
+        $res->execute();
+        
+        $response = ($res->fetchAll());
+
+                return $this->json(array(
+                    'response' => $response,
+                ));
     }
 
     // ========================================================

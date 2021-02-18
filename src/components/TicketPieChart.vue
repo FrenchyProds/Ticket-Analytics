@@ -106,7 +106,7 @@ export default {
                         },
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
-                        colors: ['#42A62A', '#de1d1d'],
+                        colors: ['#42A62A', '#f44336'],
                         responsive: [{
                         breakpoint: 480,
                         options: {
