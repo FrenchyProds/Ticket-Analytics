@@ -1,23 +1,27 @@
 <template>
     <div>
-        <p class="chartTitle">Total open and closed tickets on {{currentDate}}</p>
-        <form method="get" name="selectProblem">
-            <select v-model="selectedProblem" @change="onChange()" class="problems" name="problems">
-                <option selected value="All">All</option>
-                    <option v-for="problem in problems" :key="problem.id" class="optionTrigger" :value="(problem.id)">{{ problem.name }}</option>
-            </select>
-        </form>
-        <form v-if="details.length != 0" method="get" name="selectDetail">
-            <select v-model="selectedDetail" id="pbDetail" @change="onChangeDetail()" name="problemDetail">
-                <option value="All">All</option>
-                <option class="optionTrigger" v-for="detail in details" :key="detail.id" :value="(detail.id)">{{ detail.name }}</option>
-            </select>
-        </form>
-        <div class="chartRender" v-if="openTickets || closedTickets != 0">
-            <apexchart id="ticketPieChart" type="pie" height="300" width="100%" :options="chartOptions" :series="series"></apexchart>
+        <div v-if="loading">
         </div>
-        <div class="emptyContent" v-else>
-            <p>There are no tickets of this type !</p>
+        <div v-else>
+            <p class="chartTitle">Total open and closed tickets up to {{currentDate}}</p>
+            <form method="get" name="selectProblem">
+                <select v-model="selectedProblem" @change="onChange()" class="problems" name="problems">
+                    <option selected value="All">All</option>
+                        <option v-for="problem in problems" :key="problem.id" class="optionTrigger" :value="(problem.id)">{{ problem.name }}</option>
+                </select>
+            </form>
+            <form v-if="details.length != 0" method="get" name="selectDetail">
+                <select v-model="selectedDetail" id="pbDetail" @change="onChangeDetail()" name="problemDetail">
+                    <option value="All">All</option>
+                    <option class="optionTrigger" v-for="detail in details" :key="detail.id" :value="(detail.id)">{{ detail.name }}</option>
+                </select>
+            </form>
+            <div class="chartRender" v-if="openTickets || closedTickets != 0">
+                <apexchart id="ticketPieChart" type="pie" height="300" width="100%" :options="chartOptions" :series="series"></apexchart>
+            </div>
+            <div class="emptyContent" v-else>
+                <p>There are no tickets of this type !</p>
+            </div>
         </div>
     </div>
 </template>
@@ -40,6 +44,7 @@ export default {
         openTickets: 0,
         closedTickets: 0,
         currentDate: '',
+        loading: true,
         dataUrl: 'http://192.168.8.85:8000/dashboard/ticketpiechart/',
         chartOptions: {
             chart: {
@@ -79,9 +84,10 @@ export default {
     }
 },
   mounted () {
-      this.fetchData()
-      this.currentDate = new Date();
-    //   this.currentDate = date.formatDate(this.currentDate, 'dddd DDth of MMM YYYY at HH:mm')
+    this.fetchData()
+    this.currentDate = new Date();
+    this.currentDate = date.formatDate(this.currentDate, 'dddd MMM DD YYYY')
+    this.loading = false;
   },
   methods: {
       fetchData: async function() {
@@ -138,6 +144,7 @@ export default {
             alert('Oups, something went wrong !')
         }
       },
+
       fetchByProblem: async function() {
           try {
             if(this.selectedProblem === 'All') {
@@ -200,6 +207,7 @@ export default {
             alert('Oups, something went wrong !')
         }
       },
+
       fetchByDetail: async function() {
           try {
             if(this.selectedDetail === 'All' || this.details[0].parent != this.routeProblem) {
@@ -257,6 +265,7 @@ export default {
             alert('Oups, something went wrong !' + err)
         }           
       },
+
     onChange: async function() {
           try {
             // this.routeDetail = '%'
@@ -272,6 +281,7 @@ export default {
             alert('Oups, something went wrong !' + err)
         }
     },
+
     onChangeDetail: async function() {
         try {
             if(this.selectedDetail === 'All') {
@@ -284,7 +294,18 @@ export default {
         } catch (err) {
             alert('Oups, something went wrong !' + err)
         }
-      }
+      },
+
+    spinner() {
+        if(this.loading === true) {
+            this.$q.loading.show({
+                backgroundColor: 'purple-10',
+                delay: 0
+            })
+        } else {
+            this.$q.loading.hide()
+        }
+    },
   }
 }
 </script>
@@ -311,6 +332,7 @@ form:nth-child(odd) {
     color: white;
     font-size: 1.4rem;
     text-align: center;
+    text-transform: uppercase;
 }
 
 .chartRender {
