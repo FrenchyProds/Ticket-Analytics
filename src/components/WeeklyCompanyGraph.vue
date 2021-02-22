@@ -5,7 +5,7 @@
             <div class="xs-column">
                 <q-btn class="q-mb-1" icon="event" round color="primary">
                     <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
-                        <q-date minimal navigation-min-year-month="2019/07" v-model="startDate">
+                        <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="startDate">
                             <div class="row items-center justify-end q-gutter-sm">
                                 <q-btn label="Cancel" color="primary" flat v-close-popup />
                                 <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
@@ -20,7 +20,25 @@
             </div>
             </div>
             </q-toolbar>
-            <q-select label-color="white" @input="onChangeCompany()" outlined v-model="selectedCompany" use-input input-debounce="0" label="Companies" @filter="filterFn" :options="companies">
+            <q-select label-color="white" @input="onChangeCompany()" outlined v-model="selectedCompany" label="Companies" @filter="filterFn" :options="companies">
+                <template v-slot:no-option>
+                    <q-item>
+                        <q-item-section class="text-grey">
+                        No results
+                        </q-item-section>
+                    </q-item>
+                </template>
+            </q-select>
+            <q-select  q-select label-color="white" @input="onChangeProblem()" outlined v-model="selectedProblem" label="Problems" @filter="filterFn" :options="problems">
+                <template v-slot:no-option>
+                    <q-item>
+                        <q-item-section class="text-grey">
+                        No results
+                        </q-item-section>
+                    </q-item>
+                </template>
+            </q-select>
+            <q-select v-if=" (selectedProblem !== '' || selectedProblem !== '%')"  q-select label-color="white" @input="onChangeDetail()" outlined v-model="selectedDetail" label="Details" @filter="filterFn" :options="details">
                 <template v-slot:no-option>
                     <q-item>
                         <q-item-section class="text-grey">
@@ -67,12 +85,15 @@ export default {
             selectedDetail: '',
             detailRoute: '',
             companies: [],
+            problems: [],
+            details: [],
             options: [],
             dateStart: '',
             startDate: '',
             endDate: '',
             currentDate: '',
             currentDateMinusWeek: '',
+            dateLimit: '',
             dataUrl: 'http://192.168.8.85:8000/dashboard/companygraph/',
             paramRoute: '%/%/%/%/%',
             series: '',
@@ -84,6 +105,7 @@ export default {
     mounted() {
         this.loading = false
         this.currentDate = new Date()
+        this.dateLimit = date.formatDate(this.currentDate, 'YYYY/MM')
         this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
         this.currentDateMinusWeek = date.subtractFromDate(this.currentDate, { days: 7 })
         this.startDate = date.formatDate(this.currentDateMinusWeek, 'YYYY-MM-DD')
@@ -121,6 +143,12 @@ export default {
                             },
                             type: 'bar',
                         },
+                        plotOptions: {
+                            bar: {
+                                columnWidth: '100%',
+                                barHeight: '100%',
+                            }
+                        },
                         colors: ['#42A62A', '#f44336'],
                         animations: {
                             enabled: true,
@@ -131,16 +159,12 @@ export default {
                             show: true,
                             strokeDashArray: 0,
                             padding: {
-                                // left: 10,
                                 right: 0,
                             },
                             xaxis: {
                                 label: {
                                     show: true,
                                 },
-                                lines: {
-                                    show: false
-                                }
                             },
                             yaxis: {
                                 lines: {
@@ -189,7 +213,6 @@ export default {
                             axisTicks: {
                                 show: true
                             },
-                            // tickPlacement: 'on',
                             labels: {
                                 showDuplicates: false,
                                 show: true,
@@ -238,9 +261,6 @@ export default {
                     }
                     let open = res.data.openTickets
                     let closed = res.data.closedTickets
-                    console.log(open)
-                    console.log(this.startDate)
-                    console.log(this.endDate)
                     this.series = [{
                         name: 'Tickets Opened',
                         data: [{ x: "", y: ""}]
@@ -248,14 +268,20 @@ export default {
                         name: 'Tickets Closed',
                         data: [{ x: "", y: ""}]
                     }]
+                    this.companies.splice(0, this.companies.length)
+                    this.problems = []
+                    this.details = []
                     for (let i = 0; i < open.length; i++) {
                         this.series[0].data.push({x: '', y: ''})
-                        this.series[0].data[i].x = open[i].dateOpened
+                        this.series[0].data[i].x = open[i].dateOpened + ' GMT'
                         this.series[0].data[i].y = open[i].totalOpened
+                        this.companies.push(open[i].companyName)
+                        this.problems.push(open[i].problemName)
+                        this.details.push(open[i].detailName)
                     }
                     for (let i = 0; i < closed.length; i++) {
                         this.series[1].data.push({x: '', y: ''})
-                        this.series[1].data[i].x = closed[i].dateClosed
+                        this.series[1].data[i].x = closed[i].dateClosed + ' GMT'
                         this.series[1].data[i].y = closed[i].totalClosed
                     }
                     if(open.length == 0 && closed.length == 0) {
@@ -265,10 +291,9 @@ export default {
                     }
                     for(let i = 0; i < 9; i++) {
                         let dateCalc = date.subtractFromDate(this.endDate, { days: i })
-                        this.series[0].data.push({x: dateCalc, y:0})
-                        this.series[1].data.push({x: dateCalc, y:0})
+                        this.series[0].data.push({x: dateCalc + ' GMT', y:0})
+                        this.series[1].data.push({x: dateCalc + ' GMT', y:0})
                     }
-                    console.log(this.series)
                 })
             } catch (error) {
                 console.log(error)
@@ -319,34 +344,32 @@ export default {
                 }
                 ).then(
                     this.chartOptions = {
-                    series: [{
-                        name: 'Tickets Opened',
-                        data: [{
-                        x: '',
-                        y: ''
-                        }]
-                    }, {
-                        name: 'Tickets Closed',
-                        data: [{
-                        x: '',
-                        y: ''
-                        }]
-                    }],
-                        chart: {
-                            yaxis: {
-                                labels: {
-                                    showDuplicates: false,
-                                    style: {
-                                    colors: '#fff'
-                                    },
-                                    formatter: function(value) {
-                                        if(!isNaN(value)) {
-                                            return parseInt(value)
-                                        } else {
-                                            return value.toFixed(0);
-                                        }
-                                    },
-                                }
+                        series: [{
+                            name: 'Tickets Opened',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }, {
+                            name: 'Tickets Closed',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }],
+                        yaxis: {
+                            labels: {
+                                showDuplicates: false,
+                                style: {
+                                colors: '#fff'
+                                },
+                                formatter: function(value) {
+                                    if(!isNaN(value)) {
+                                        return parseInt(value)
+                                    } else {
+                                        return value.toFixed(0);
+                                    }
+                                },
                             }
                         }
                     },
@@ -357,7 +380,177 @@ export default {
         },
 
         onChangeCompany() {
+             try {
+                if(!this.selectedCompany) {
+                    this.companyRoute = '%'
+                } else {
+                    this.companyRoute = this.selectedCompany
+                }
+                if(!this.selectedProblem) {
+                    this.problemRoute = '%'
+                } else {
+                    this.problemRoute = this.selectedProblem
+                }
+                if(!this.selectedDetail) {
+                    this.detailRoute = '%'
+                } else {
+                    this.detailRoute = this.selectedDetail
+                }
+                this.paramRoute = this.problemRoute + '/' + this.detailRoute + '/' + this.companyRoute + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD')
+                 this.$axios.post(this.dataUrl + this.paramRoute , {
+                    headers: { 'Content-Type': 'application/json' },
+                    crossdomain: true
+                }).then(
+                    this.chartOptions = {
+                        series: [{
+                            name: 'Tickets Opened',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }, {
+                            name: 'Tickets Closed',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }],
+                        yaxis: {
+                            labels: {
+                                showDuplicates: false,
+                                style: {
+                                colors: '#fff'
+                                },
+                                formatter: function(value) {
+                                    if(!isNaN(value)) {
+                                        return parseInt(value)
+                                    } else {
+                                        return value.toFixed(0);
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    this.fetchData(this.paramRoute))
+             } catch (error) {
+                 console.log(error)
+             }
+        },
 
+        onChangeProblem() {
+            try {
+                if(!this.selectedCompany) {
+                    this.companyRoute = '%'
+                } else {
+                    this.companyRoute = this.selectedCompany
+                }
+                if(!this.selectedProblem) {
+                    this.problemRoute = '%'
+                } else {
+                    this.problemRoute = this.selectedProblem
+                }
+                if(!this.selectedDetail) {
+                    this.detailRoute = '%'
+                } else {
+                    this.detailRoute = this.selectedDetail
+                }
+                this.paramRoute = this.problemRoute + '/' + this.detailRoute + '/' + this.companyRoute + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD')
+                this.$axios.post(this.dataUrl + this.paramRoute , {
+                    headers: { 'Content-Type': 'application/json' },
+                    crossdomain: true
+                }).then(
+                    this.chartOptions = {
+                        series: [{
+                            name: 'Tickets Opened',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }, {
+                            name: 'Tickets Closed',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }],
+                        yaxis: {
+                            labels: {
+                                showDuplicates: false,
+                                style: {
+                                colors: '#fff'
+                                },
+                                formatter: function(value) {
+                                    if(!isNaN(value)) {
+                                        return parseInt(value)
+                                    } else {
+                                        return value.toFixed(0);
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    this.fetchData(this.paramRoute))
+             } catch (error) {
+                 console.log(error)
+             }
+        },
+
+        onChangeDetail() {
+            try {
+                if(!this.selectedCompany) {
+                    this.companyRoute = '%'
+                } else {
+                    this.companyRoute = this.selectedCompany
+                }
+                if(!this.selectedProblem) {
+                    this.problemRoute = '%'
+                } else {
+                    this.problemRoute = this.selectedProblem
+                }
+                if(!this.selectedDetail) {
+                    this.detailRoute = '%'
+                } else {
+                    this.detailRoute = this.selectedDetail
+                }
+                this.paramRoute = this.problemRoute + '/' + this.detailRoute + '/' + this.companyRoute + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD')
+                this.$axios.post(this.dataUrl + this.paramRoute , {
+                    headers: { 'Content-Type': 'application/json' },
+                    crossdomain: true
+                }).then(
+                    this.chartOptions = {
+                        series: [{
+                            name: 'Tickets Opened',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }, {
+                            name: 'Tickets Closed',
+                            data: [{
+                            x: '',
+                            y: ''
+                            }]
+                        }],
+                        yaxis: {
+                            labels: {
+                                showDuplicates: false,
+                                style: {
+                                colors: '#fff'
+                                },
+                                formatter: function(value) {
+                                    if(!isNaN(value)) {
+                                        return parseInt(value)
+                                    } else {
+                                        return value.toFixed(0);
+                                    }
+                                },
+                            }
+                        }
+                    },
+                    this.fetchData(this.paramRoute))
+             } catch (error) {
+                 console.log(error)
+             }
         }
     }
 }

@@ -2,6 +2,35 @@
   <div class="q-pa-md">
       <div class="q-gutter-sm center">
           <div class="row customRowPosition justify-center items-center">
+              <div class="xs-column">
+                <div class="datePicker">
+                <q-btn class="q-mb-1" icon="event" round color="primary">
+                    <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
+                        <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="startDate">
+                            <div class="row items-center justify-end q-gutter-sm">
+                                <q-btn label="Cancel" color="primary" flat v-close-popup />
+                                <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                            </div>
+                        </q-date>
+                    </q-popup-proxy>
+                </q-btn>
+                <q-btn class="q-mb-1" icon="fas fa-calendar-times" round color="primary">
+                    <q-popup-proxy @before-show="updateEndDate" transition-show="scale" transition-hide="scale">
+                        <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="endDate">
+                            <div class="row items-center justify-end q-gutter-sm">
+                                <q-btn label="Cancel" color="primary" flat v-close-popup />
+                                <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                            </div>
+                        </q-date>
+                    </q-popup-proxy>
+                </q-btn>
+                </div>
+                    <div class="flex content-between column-xs-sm row-md-lg-xl datePicker">
+                        <p class="q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+                        
+                        <p class="q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+                    </div>
+                </div>
           <q-btn  label="Toggle Columns" color="primary" @click="modal = true" class="buttonStyle customButtonPosition center" />
           </div>
           <q-dialog v-model="modal">
@@ -62,9 +91,15 @@ import { date } from 'quasar'
 export default {
   data () {
     return {
-        url: 'http://192.168.8.85:8000/dashboard/rawdata',
+        url: 'http://192.168.8.85:8000/dashboard/rawdata/',
+        paramRoute: '%/%',
         visibleColumns: ['ticketId', 'problem', 'detail', 'company', 'ticketLevel', 'ticketStatus', 'created', 'closed', 'age', 'comment', 'createdBy', 'closedBy'],
         reset: '',
+        startDate: '',
+        endDate: '',
+        dateLimit: '',
+        ageCalc: '',
+        closedBy: '',
         pagination: {
             rowsPerPage: 10,
         },
@@ -161,6 +196,11 @@ export default {
     }
   },
   mounted() {
+    this.currentDate = new Date()
+    this.dateLimit = date.formatDate(this.currentDate, 'YYYY/MM')
+    this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
+    this.startDate = '2019-04-19'
+    this.paramRoute = this.startDate + '/' + this.endDate
     this.fetchData();
   },
   methods: {
@@ -170,22 +210,26 @@ export default {
       removeColumns() {
           this.visibleColumns = ['ticketId'];
       },
-      getRandomInt(max) {
-        return Math.floor(Math.random() * Math.floor(max));
-      },
       fetchData() {
           try {
-            this.$axios.get(this.url, {
+            this.$axios.get(this.url + this.paramRoute, {
                 headers: { 'Content-Type': 'application/json' },
                 crossdomain: true
             }).then(res => {
-                let newDate = new Date()
-                let createdDate = date.subtractFromDate(newDate, { days: 15 })
-                createdDate = date.formatDate(createdDate, 'DD-MM-YYYY')
-                let closedDate = date.subtractFromDate(newDate, { days: 5 })
-                closedDate = date.formatDate(closedDate, 'DD-MM-YYYY')
+                console.log(this.url + this.paramRoute)
                 let fetchData = res.data.response
+                let unit = 'days'
                 for (let i = 0; i < fetchData.length; i++) {
+                    if(fetchData[i].dateClosed) {
+                        this.ageCalc = date.getDateDiff(fetchData[i].dateClosed, fetchData[i].dateCreated, unit) + ' days'
+                    } else {
+                        this.ageCalc = date.getDateDiff(this.currentDate, fetchData[i].dateCreated, unit) + ' days'
+                    }
+                    if(fetchData[i].closedBy) {
+                        this.closedBy = fetchData[i].closedBy
+                    } else {
+                        this.closedBy = "The ticket has not been closed yet !"
+                    }
                     this.data.push({
                         id: fetchData[i].ticketId,
                         problem: fetchData[i].problemName,
@@ -193,19 +237,42 @@ export default {
                         company: fetchData[i].companyName,
                         ticketLevel: 'Level ' + fetchData[i].ticketLevel,
                         ticketStatus: fetchData[i].ticketStatus,
-                        created: createdDate,
+                        created: fetchData[i].dateCreated,
                         createdBy: fetchData[i].createdBy,
-                        closed: closedDate,
-                        closedBy: fetchData[i].closedBy,
-                        age: closedDate - createdDate + ' = closedDate - createdDate',
+                        closed: fetchData[i].dateClosed,
+                        closedBy: this.closedBy,
+                        age: this.ageCalc,
                         comment: fetchData[i].ticketSubject
                     })
                 }
+                console.log(this.data)
             })
           } catch (error) {
               console.log(error)
           }
-      }
+      },
+    updateStartDate() {
+
+    },
+    updateEndDate() {
+
+    },
+    save() {
+        try {
+            this.paramRoute = date.formatDate(this.startDate, 'YYYY-MM-DD') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD')
+            this.$axios.post(this.url + this.paramRoute  , {
+                headers: { 'Content-Type': 'application/json' },
+                crossdomain: true
+                }
+                ).then( res => {
+                    this.data.splice(0, this.data.length)
+                    console.log(this.data)
+                    this.fetchData(this.paramRoute)
+                })
+        } catch (error) {
+            console.log(error)
+        }
+    },
   }
 }
 </script>
@@ -217,6 +284,12 @@ export default {
     }
     .q-table .closedTicket {
         background-color: lightcoral;
+    }
+
+    .datePicker {
+        display: flex;
+        justify-content: space-around;
+        padding-bottom: 1rem;
     }
 
     @media (min-width: 768px) {

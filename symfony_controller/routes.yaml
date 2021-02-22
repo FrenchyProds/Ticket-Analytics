@@ -249,8 +249,11 @@ updateticket:
 # ANALTYICS CONTROLLERS
 
 rawdata:
-    path: /dashboard/rawdata
+    path: /dashboard/rawdata/{startDate}/{endDate}
     controller: App\Controller\AnalyticsController::rawData
+    defaults:
+        startDate: '%'
+        endDate: '%'
 
 ticketPieChart:
     path: /dashboard/ticketpiechart/{problemName}/{detailName}
@@ -270,13 +273,12 @@ hourlyGrid:
         endDate: 'now'
 
 companyGraph:
-    path: /dashboard/companyGraph/{problemName}/{detailName}/{companyName}/{ticketStatus}/{startDate}/{endDate}
+    path: /dashboard/companygraph/{problemName}/{detailName}/{companyName}/{startDate}/{endDate}
     controller: App\Controller\AnalyticsController::companyGraph
     defaults:
         problemName: '%'
         detailName: '%'
         companyName: '%'
-        ticketStatus: '%'
         startDate: 'week'
         endDate: 'now'
     requirements:

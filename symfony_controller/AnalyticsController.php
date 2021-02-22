@@ -44,16 +44,18 @@ class AnalyticsController extends Controller {
 
     // ticket id, ticket age, comment, status
 
-    #[Route('/dashboard/rawdata')]
-    public function rawData(Request $request) {
+    #[Route('/dashboard/rawdata/{startDate}/{endDate}')]
+    public function rawData(Request $request, $startDate, $endDate) {
         $req = $this->getDoctrine()->getManager();
 
         $fetchData =
-            'SELECT p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, u.name AS createdBy, u.employe AS employeeStatus, t.id AS ticketId, ts.name AS ticketStatus, t.level AS ticketLevel, t.subject AS ticketSubject, (SELECT uu.name FROM ticket_history tth, users uu WHERE tth.user = uu.id AND tth.ticketstatus = 2 AND th.ticket = tth.ticket GROUP BY tth.ticket) AS closedBy
+            'SELECT p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, u.name AS createdBy, t.created AS dateCreated, u.employe AS employeeStatus, t.id AS ticketId, ts.name AS ticketStatus, t.level AS ticketLevel, t.subject AS ticketSubject, (SELECT uu.name FROM ticket_history tth, users uu WHERE tth.user = uu.id AND tth.ticketstatus = 2 AND th.ticket = tth.ticket GROUP BY tth.ticket) AS closedBy, (SELECT max(updated) FROM ticket_history WHERE ticketstatus = 2 AND th.ticket = ticket GROUP BY ticket) as dateClosed 
                 FROM problem p, problem_detail pd, cust_info ci, users u, ticket t, ticket_status ts, level l, ticket_history th
-                    WHERE t.problem = p.id AND t.problemdetail = pd.id AND t.custinfo = ci.id AND u.id = t.user AND t.ticketstatus = ts.id AND t.level = l.id AND th.ticket = t.id GROUP BY th.ticket'
+                    WHERE t.problem = p.id AND t.problemdetail = pd.id AND t.custinfo = ci.id AND u.id = t.user AND t.ticketstatus = ts.id AND t.level = l.id AND t.created BETWEEN :startDate AND :endDate AND th.ticket = t.id GROUP BY th.ticket'
         ;
         $res = $req->getConnection()->prepare($fetchData);
+        $res->bindParam('startDate', $startDate);
+        $res->bindParam('endDate', $endDate);
         $res->execute();
         
         $response = ($res->fetchAll());
@@ -145,7 +147,7 @@ class AnalyticsController extends Controller {
         $fetchUsers = $req->createQuery(
             'SELECT u.name AS name, u.id AS id
                 FROM App\Entity\Users u
-                    WHERE u.employe = 1'
+                    WHERE u.employe = 1 AND u.enabled = 1 ORDER BY name ASC'
         );
         $userList = $fetchUsers->getResult();
         
@@ -169,9 +171,10 @@ class AnalyticsController extends Controller {
         $closeReq->execute();
         $closedTicketsResult = ($closeReq->fetchAll());
 
-        return $this->json(array('users' => $userList,
-                                 'openTickets' => $openTicketsResult,
-                                 'closedTickets' => $closedTicketsResult
+        return $this->json(array(
+            'users' => $userList,
+            'openTickets' => $openTicketsResult,
+            'closedTickets' => $closedTicketsResult
 
         ));
     }
@@ -183,44 +186,48 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-    #[Route('/dashboard/companygraph/{problemName}/{detailName}/{companyName}/{ticketStatus}/{startDate}/{endDate}')]
-    public function companyGraph(Request $request, $problemName, $detailName, $companyName, $ticketStatus, $startDate, $endDate) {
+    #[Route('/dashboard/companygraph/{problemName}/{detailName}/{companyName}/{startDate}/{endDate}')]
+    public function companyGraph(Request $request, $problemName, $detailName, $companyName, $startDate, $endDate) {
         $req = $this->getDoctrine()->getManager();
 
-        // $problem = $request->request->get('problem');
-        // $problemDetail = $request->request->get('problemDetail');
-        // $companyName = $request->request->get('companyName');
-        // $ticketStatus = $request->request->get('ticketStatus');
+        $fetchCompany = 
+            'SELECT ci.acct_name AS companyName, ci.id AS id
+                FROM cust_info ci ORDER BY companyName ASC';
+        $companies = $req->getConnection()->prepare($fetchCompany);
+        $companies->execute();
+        $companyList = ($companies->fetchAll());
 
-        $dev = true;
+        $openTickets =
+            'SELECT th.ticket AS openTickets, p.name AS problemName, pd.name AS detailName, DATE(th.updated) as dateOpened, ci.acct_name AS companyName, ts.id AS ticketStatus, ts.name AS ticketStatusName, COUNT(DATE(th.updated)) AS totalOpened
+                FROM ticket t, problem p, problem_detail pd, cust_info ci, ticket_status ts, ticket_history th
+                    WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND ts.id = 1 AND t.id = th.ticket AND t.custinfo = ci.id AND ts.id = t.ticketstatus AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemName AND pd.name LIKE :detailName AND ci.acct_name LIKE :companyName AND th.updated BETWEEN :startDate AND :endDate GROUP BY DATE(th.updated)';
+        $openReq = $req->getConnection()->prepare($openTickets);
+        $openReq->bindParam('problemName', $problemName);
+        $openReq->bindParam('detailName', $detailName);
+        $openReq->bindParam('companyName', $companyName);
+        $openReq->bindParam('startDate', $startDate);
+        $openReq->bindParam('endDate', $endDate);
+        $openReq->execute();
+        $openTicketsResult = ($openReq->fetchAll());
 
-        if($dev) {
-            $problem = 1;
-            $problemDetail = 1;
-            $companyName = 49;
-            $ticketStatus = 2;
-        } else {
-            $problem = '%';
-            $problemDetail = '%';
-            $companyName = '%';
-            $ticketStatus = '%';
-        }
-        $graphRequest = $req->createQuery(
-            'SELECT COUNT(t.id) AS countTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, ts.id AS ticketStatus, ts.name AS ticketStatusName
-                FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd, App\Entity\CustInfo ci, App\Entity\TicketStatus ts
-                    WHERE t.custinfo = ci.id AND ts.id = t.ticketstatus AND t.problem = p.id AND t.problemdetail = pd.id AND p.id LIKE :problemId AND pd.id LIKE :problemDetailId AND ci.id LIKE :companyName AND ts.id LIKE :ticketStatus'
-        );
-        $graphRequest->setParameter('problemId', $problem)
-                    ->setParameter('problemDetailId', $problemDetail)
-                    ->setParameter('companyName', $companyName)
-                    ->setParameter('ticketStatus', $ticketStatus);
-        $responseOpen = $graphRequest->getResult();
+        $closedTickets = 'SELECT th.ticket AS closedTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, ts.id AS ticketStatus, ts.name AS ticketStatusName, DATE(th.updated) AS dateClosed, COUNT(DATE(th.updated)) AS totalClosed
+            FROM ticket t, problem p, problem_detail pd, cust_info ci, ticket_status ts, ticket_history th
+                WHERE th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND t.ticketstatus = 2 AND t.id = th.ticket AND t.custinfo = ci.id AND ts.id = t.ticketstatus AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemName AND pd.name LIKE :detailName AND ci.acct_name LIKE :companyName AND th.updated BETWEEN :startDate AND :endDate GROUP BY DATE(th.updated)';
+        $closedReq = $req->getConnection()->prepare($closedTickets);
+        $closedReq->bindParam('problemName', $problemName);
+        $closedReq->bindParam('detailName', $detailName);
+        $closedReq->bindParam('companyName', $companyName);
+        $closedReq->bindParam('startDate', $startDate);
+        $closedReq->bindParam('endDate', $endDate);
+        $closedReq->execute();
+        $closedTicketsResult = ($closedReq->fetchAll());
 
-        $res = new JsonResponse();
-        $res->headers->set('Content-Type', 'application/json');
-        $res->setData(array('ticketList' => $graphRequest));
-        echo '<p>There are currently ' . $responseOpen[0]['countTickets'] . ' ' . strtolower($responseOpen[0]['ticketStatusName']) . ' tickets for ' . $responseOpen[0]['companyName'] . ' that are due to ' . $responseOpen[0]['problemName'] . ' - ' . $responseOpen[0]['detailName'];
-        die();
+        return $this->json(array(
+            'companyList' => $companyList,
+            'openTickets' => $openTicketsResult,
+            'closedTickets' => $closedTicketsResult
+        ));
+
     }
 
 
@@ -263,7 +270,7 @@ class AnalyticsController extends Controller {
         $dailyClosedTicketTracker = $req->createQuery(
             'SELECT COUNT(t.id) AS countClosedTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName
                 FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd, App\Entity\CustInfo ci
-                    WHERE t.created BETWEEN :startDate AND :endDate AND t.ticketstatus = 2 AND t.custinfo = ci.id AND t.problem = p.id AND t.problemdetail = pd.id AND p.id LIKE :problemId AND pd.id LIKE :problemDetailId AND ci.id LIKE :companyName'
+                    WHERE t.created BETWEEN :startDate AND :endDate AND t.ticketstatus = 2 AND t.custinfo = ci.id AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND ci.id LIKE :companyName'
         );
         $dailyClosedTicketTracker->setParameter('problemId', $problem)
                     ->setParameter('problemDetailId', $problemDetail)

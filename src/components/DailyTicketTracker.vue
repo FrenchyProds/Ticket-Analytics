@@ -5,7 +5,7 @@
         <div class="xs-column">
           <q-btn class="q-mb-1" icon="event" round color="primary">
               <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
-                  <q-date minimal navigation-min-year-month="2019/07" v-model="startDate">
+                  <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="startDate">
                       <div class="row items-center justify-end q-gutter-sm">
                           <q-btn label="Cancel" color="primary" flat v-close-popup />
                           <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
@@ -20,7 +20,7 @@
         </div>
         </div>
         </q-toolbar>
-        <q-select label-color="white" outlined @input="onChangeUser()" v-model="selectedUser" use-input input-debounce="0" label="Users" @filter="filterFn" :options="users">
+        <q-select label-color="white" outlined @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
             <template v-slot:no-option>
                 <q-item>
                     <q-item-section class="text-grey">
@@ -70,6 +70,7 @@ export default {
       currentDate: '',
       currentDateMinus: '',
       totalHours: [],
+      dateLimit: '',
       dataUrl: 'http://192.168.8.85:8000/dashboard/hourlygrid/',
       paramRoute: '%/week/now',
       series: '',
@@ -79,6 +80,7 @@ export default {
   },
   mounted() { 
     this.currentDate = new Date()
+    this.dateLimit = date.formatDate(this.currentDate, 'YYYY/MM')
     this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
     this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 7 })
     this.startDate = date.formatDate(this.currentDateMinus, 'YYYY-MM-DD')
