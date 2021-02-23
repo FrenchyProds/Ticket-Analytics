@@ -170,8 +170,8 @@ export default {
                             title: {
                                 text: 'Employee Name',
                                 style: {
-                                color: '#FFF'
-                                }
+                                    color: '#FFF'
+                                },
                             },
                             axisBorder: {
                                 show: true,
@@ -185,7 +185,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 show: true,
-                                rotateAlways: true,
+                                // rotateAlways: true,
                                 format: 'dd/MM',
                                 style: {
                                 colors: '#fff'

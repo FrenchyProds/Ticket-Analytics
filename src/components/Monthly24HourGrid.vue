@@ -4,14 +4,14 @@
         <q-toolbar class="text-center">
         <div class="xs-column">
           <q-btn class="q-mb-1" icon="event" round color="primary">
-              <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
-                  <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="startDate">
-                      <div class="row items-center justify-end q-gutter-sm">
-                          <q-btn label="Cancel" color="primary" flat v-close-popup />
-                          <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
-                      </div>
-                  </q-date>
-              </q-popup-proxy>
+            <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
+              <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="startDate">
+                  <div class="row items-center justify-end q-gutter-sm">
+                      <q-btn label="Cancel" color="primary" flat v-close-popup />
+                      <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                  </div>
+              </q-date>
+            </q-popup-proxy>
           </q-btn>
           <div class="flex content-between column-xs-sm row-md-lg-xl">
           <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
@@ -21,13 +21,13 @@
         </div>
         </q-toolbar>
         <q-select label-color="white" outlined use-input @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
-            <template v-slot:no-option>
-                <q-item>
-                    <q-item-section class="text-grey">
-                    No results
-                    </q-item-section>
-                </q-item>
-            </template>
+          <template v-slot:no-option>
+              <q-item>
+                  <q-item-section class="text-grey">
+                  No results
+                  </q-item-section>
+              </q-item>
+          </template>
         </q-select>
         <div class="emptyContent" v-if="empty != false">
           <p>There are no tickets for the selected dates</p>
@@ -41,7 +41,7 @@
         >
         <card-base>
           <div style="width: 1200px; min-height: 200px; linear-gradient( 135deg, #343E59 10%, #2B2D3E 40%)">
-          <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
+            <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
           </div>
         </card-base>
         </q-scroll-area>

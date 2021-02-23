@@ -211,7 +211,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 show: true,
-                                rotateAlways: true,
+                                // rotateAlways: true,
                                 format: 'dd/MM',
                                 style: {
                                 colors: '#fff'
@@ -299,7 +299,7 @@ export default {
                     } else {
                         this.empty = false;
                     }
-                    for(let i = 0; i < 9; i++) {
+                    for(let i = 0; i < 8; i++) {
                         let dateCalc = date.subtractFromDate(this.endDate, { days: i })
                         this.series[0].data.push({x: dateCalc + ' GMT', y:0})
                         this.series[1].data.push({x: dateCalc + ' GMT', y:0})

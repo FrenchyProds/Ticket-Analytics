@@ -112,6 +112,7 @@ export default {
             align: 'left',
             field: 'id',
             sortable: true,
+            sort: (a, b) => parseInt(a, 10) - parseInt(b, 10)
         },
         {
             name: 'problem',
