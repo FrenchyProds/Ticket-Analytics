@@ -17,6 +17,12 @@ quasar dev
 npx quasar dev
 ```
 
+### ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! 
+### Once the application is successfully launched, you should have localhost:8080 open automatically in your browser
+### To access the analytics section, navigate to localhost:8080/dashboard
+### ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! 
+
+
 ### Lint the files
 ```bash
 npm run lint

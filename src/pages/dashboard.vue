@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <DailyTicketTracker></DailyTicketTracker>
+            <Weekly24HourGrid></Weekly24HourGrid>
           </card-base>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -46,12 +46,12 @@
             <WeeklyCompanyGraph></WeeklyCompanyGraph>
           </card-base>
         </div>
-        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <apex-line></apex-line>
+            <WeeklyEmployeePerformance></WeeklyEmployeePerformance>
           </card-base>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
             <apex-line-gradient></apex-line-gradient>
           </card-base>
@@ -76,7 +76,7 @@
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <DailyTicketTrackerMonthly></DailyTicketTrackerMonthly>
+            <Monthly24HourGrid></Monthly24HourGrid>
           </card-base>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -84,12 +84,12 @@
             <MonthlyCompanyGraph></MonthlyCompanyGraph>
           </card-base>
         </div>
-        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <apex-line></apex-line>
+            <MonthlyEmployeePerformance></MonthlyEmployeePerformance>
           </card-base>
         </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
+        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
             <apex-line-gradient></apex-line-gradient>
           </card-base>
@@ -118,11 +118,13 @@ export default {
   components: {
     CardBase,
     TicketPieChart: () => import('components/TicketPieChart'),
-    DailyTicketTracker: () => import('components/DailyTicketTracker'),
-    DailyTicketTrackerMonthly: () => import('components/DailyTicketTrackerMonthly'),
+    Weekly24HourGrid: () => import('components/Weekly24HourGrid'),
+    Monthly24HourGrid: () => import('components/Monthly24HourGrid'),
     RawData: () => import('components/RawData'),
     WeeklyCompanyGraph: () => import('components/WeeklyCompanyGraph'),
     MonthlyCompanyGraph: () => import('components/MonthlyCompanyGraph'),
+    WeeklyEmployeePerformance: () => import('components/WeeklyEmployeePerformance'),
+    MonthlyEmployeePerformance: () => import('components/MonthlyEmployeePerformance'),
   },
   data () {
     return {

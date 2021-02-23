@@ -20,7 +20,7 @@
             </div>
             </div>
             </q-toolbar>
-            <q-select label-color="white" @input="onChangeCompany()" outlined v-model="selectedCompany" label="Companies" @filter="filterFn" :options="companies">
+            <q-select label-color="white" use-input @input="onChangeCompany()" outlined v-model="selectedCompany" label="Companies" @filter="filterFn" :options="companies">
                 <template v-slot:no-option>
                     <q-item>
                         <q-item-section class="text-grey">
@@ -88,7 +88,6 @@ export default {
             problems: [],
             details: [],
             options: [],
-            dateStart: '',
             startDate: '',
             endDate: '',
             currentDate: '',
@@ -109,7 +108,6 @@ export default {
         this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
         this.currentDateMinusWeek = date.subtractFromDate(this.currentDate, { days: 7 })
         this.startDate = date.formatDate(this.currentDateMinusWeek, 'YYYY-MM-DD')
-        this.dateStart = this.startDate
         this.paramRoute = '%/%/%/' + this.startDate + '/' + this.endDate
         this.fetchData()
     },
@@ -129,6 +127,9 @@ export default {
                     this.options = this.companies
                     this.chartOptions = {
                         chart: {
+                            zoom: {
+                                autoScaleYaxis: true
+                            },
                             toolbar: { 
                                 show: true, 
                                 tools: { 
@@ -142,12 +143,6 @@ export default {
                                 },
                             },
                             type: 'bar',
-                        },
-                        plotOptions: {
-                            bar: {
-                                columnWidth: '100%',
-                                barHeight: '100%',
-                            }
                         },
                         colors: ['#42A62A', '#f44336'],
                         animations: {
@@ -275,14 +270,29 @@ export default {
                         this.series[0].data.push({x: '', y: ''})
                         this.series[0].data[i].x = open[i].dateOpened + ' GMT'
                         this.series[0].data[i].y = open[i].totalOpened
-                        this.companies.push(open[i].companyName)
-                        this.problems.push(open[i].problemName)
-                        this.details.push(open[i].detailName)
+                        if (this.companies.indexOf(open[i].companyName) == -1 ) {
+                            this.companies.push(open[i].companyName)
+                        }
+                        if (this.problems.indexOf(open[i].problemName) == -1 ) {
+                            this.problems.push(open[i].problemName)
+                        }
+                        if (this.details.indexOf(open[i].detailName) == -1 ) {
+                            this.details.push(open[i].detailName)
+                        } 
                     }
                     for (let i = 0; i < closed.length; i++) {
                         this.series[1].data.push({x: '', y: ''})
                         this.series[1].data[i].x = closed[i].dateClosed + ' GMT'
                         this.series[1].data[i].y = closed[i].totalClosed
+                        if (this.companies.indexOf(closed[i].companyName) == -1 ) {
+                            this.companies.push(closed[i].companyName)
+                        }
+                        if (this.problems.indexOf(closed[i].problemName) == -1 ) {
+                            this.problems.push(closed[i].problemName)
+                        }
+                        if (this.details.indexOf(closed[i].detailName) == -1 ) {
+                            this.details.push(closed[i].detailName)
+                        }   
                     }
                     if(open.length == 0 && closed.length == 0) {
                         this.empty = true;
@@ -314,13 +324,12 @@ export default {
         },
 
         updateStartDate () {
-            this.startDate = this.dateStart
+            this.startDate = this.startDate
         },
 
         save() {
-            this.dateStart = this.startDate
-            this.dateEnd = date.addToDate(this.startDate, { days: 7 })
-            this.endDate = date.formatDate(this.dateEnd, 'YYYY/MM/DD')
+            this.endDate = date.addToDate(this.startDate, { days: 7 })
+            this.endDate = date.formatDate(this.endDate, 'YYYY/MM/DD')
             try {
                 if(!this.selectedCompany) {
                     this.companyRoute = '%'

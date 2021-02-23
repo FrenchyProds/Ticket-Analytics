@@ -1,6 +1,6 @@
 <template>
     <div>
-      <p class="chartTitle">Tickets opened and closed every hour - Weekly</p>
+      <p class="chartTitle">Tickets opened and closed every hour - Monthly</p>
         <q-toolbar class="text-center">
         <div class="xs-column">
           <q-btn class="q-mb-1" icon="event" round color="primary">
@@ -20,7 +20,7 @@
         </div>
         </div>
         </q-toolbar>
-        <q-select label-color="white" outlined @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
+        <q-select label-color="white" outlined use-input @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
             <template v-slot:no-option>
                 <q-item>
                     <q-item-section class="text-grey">
@@ -36,7 +36,7 @@
         <q-scroll-area
           v-if="empty == false"
           horizontal
-          style="minHeight: 250px; height: 300px; width: 2000px; max-height: 100%; max-width: 100%;"
+          style="minHeight: 250px; height: 300px; width: 700px; max-height: 100%; max-width: 100%;"
           class="bg-grey-1 rounded-borders shadow-2"
         >
         <card-base>
@@ -52,7 +52,7 @@
 import { date } from 'quasar'
 import CardBase from 'components/CardBase'
 export default {
-  name: 'DailyTicketTracker',
+  name: 'Monthly24HourGrid',
   components: {
     CardBase,
   },
@@ -64,7 +64,6 @@ export default {
       usersId: [],
       userList: [],
       options: [],
-      dateStart: '',
       startDate: '',
       endDate: '',
       currentDate: '',
@@ -82,9 +81,8 @@ export default {
     this.currentDate = new Date()
     this.dateLimit = date.formatDate(this.currentDate, 'YYYY/MM')
     this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
-    this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 7 })
+    this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 30 })
     this.startDate = date.formatDate(this.currentDateMinus, 'YYYY-MM-DD')
-    this.dateStart = this.startDate
     this.paramRoute = '%/' + this.startDate + '/' + this.endDate
     this.fetchData()
   },
@@ -153,20 +151,23 @@ export default {
                               }
                           }
                       }
-                  }
+                    }
                   },
-                    toolbar: { 
-                      show: true, 
-                      tools: { 
-                        download: true, 
-                        selection: true, 
-                        zoom: true,
-                        zoomin: true, 
-                        zoomout: true, 
-                        pan: true, 
-                        reset: true },
-                    },
-                    type: 'bar',
+                  zoom: {
+                      autoScaleYaxis: true
+                  },
+                  toolbar: { 
+                    show: true, 
+                    tools: { 
+                      download: true, 
+                      selection: true, 
+                      zoom: true,
+                      zoomin: true, 
+                      zoomout: true, 
+                      pan: true, 
+                      reset: true },
+                  },
+                  type: 'bar',
                 },
                 colors: ['#42A62A', '#f44336'],
                 animations: {
@@ -337,12 +338,11 @@ export default {
     },
 
     updateStartDate () {
-      this.startDate = this.dateStart
+      this.startDate = this.startDate
   },
     save () {
-      this.dateStart = this.startDate
-      this.dateEnd = date.addToDate(this.startDate, { days: 7 })
-      this.endDate = date.formatDate(this.dateEnd, 'YYYY/MM/DD')
+      this.endDate = date.addToDate(this.startDate, { days: 30 })
+            this.endDate = date.formatDate(this.endDate, 'YYYY/MM/DD')
       try {
         if(!this.selectedUser) {
             this.userRoute = '%'
