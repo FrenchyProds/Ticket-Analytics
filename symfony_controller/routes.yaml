@@ -284,15 +284,13 @@ companyGraph:
     requirements:
         _locale: fr|en
 
-dailyTicketTracker:
-    path: /dashboard/dailyTicketTracker
-    controller: App\Controller\AnalyticsController::dailyTicketTracker
-    requirements:
-        _locale: fr|en
-
 employeePerformanceTracker:
-    path: /dashboard/employeePerformanceTracker
+    path: /dashboard/employeeperformancetracker/{employeeName}/{startDate}/{endDate}
     controller: App\Controller\AnalyticsController::employeePerformanceTracker
+    defaults:
+        employeeName: '%'
+        startDate: '%'
+        endDate: '%'
     requirements:
         _locale: fr|en
 

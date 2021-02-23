@@ -293,59 +293,35 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-    #[Route('/dashboard/employeePerformanceTracker')]
-    public function employeePerformanceTracker(Request $request) {
+    #[Route('/dashboard/employeeperformancetracker/{employeeName}/{startDate}/{endDate}')]
+    public function employeePerformanceTracker(Request $request, $employeeName, $startDate, $endDate) {
         $req = $this->getDoctrine()->getManager();
 
-        
-        // $employeePerformanceTracker = $req->createQuery(
-        //     'SELECT COUNT(th.id) AS countOpenedTickets, u.name AS employeeName
-        //         FROM App\Entity\TicketHistory th, App\Entity\Users u
-        //         WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT min(id) FROM App\Entity\TicketHistory GROUP BY th.ticket ) AND th.user LIKE :user and th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1'
-        // );
-        // $employeePerformanceTracker->setParameter('user', $user)
-        //             ->setParameter('startDate', $startDate)
-        //             ->setParameter('endDate', $endDate);
-
-        //$conn = $this->getDoctrine()->getManager()->getConnection();
-
-        $dev = true;
-        $startDate = new \DateTime('now');
-        $startDate = date_modify($startDate, '-30 day');
-        $start = $startDate->format('Y-m-d H:i:s');
-        $endDate = new \DateTime('now');
-        $end = $endDate->format('Y-m-d H:i:s');
-        if($dev) {
-            $user = 9;
-        } else {
-            $user = '%';
-        }
-
-        $open = 'SELECT count(th.id) AS totalTicketsOpened, u.name AS employeeName, u.employe AS Is_Employee
+        $open = 'SELECT th.id AS ticketInfo, u.name AS employeeName, DATE(th.updated) as dateCreated, COUNT(DATE(th.updated)) AS totalCreated
         FROM ticket_history th, users u
-        WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.user LIKE :userId AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1';
+        WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND u.name LIKE :employeeName AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.enabled = 1 GROUP BY DATE(th.updated)';
 
         $openReq = $req->getConnection()->prepare($open);
-        $openReq->bindParam('startDate', $start);
-        $openReq->bindParam('endDate', $end);
-        $openReq->bindParam('userId', $user);
+        $openReq->bindParam('startDate', $startDate);
+        $openReq->bindParam('endDate', $endDate);
+        $openReq->bindParam('employeeName', $employeeName);
         $openReq->execute();
         $openTickets = ($openReq->fetchAll());
 
-        $close = 'SELECT count(th.id) AS totalTicketsClosed, u.name AS employeeName, u.employe AS Is_Employee
+        $close = 'SELECT th.ticket AS ticketInfo, u.name AS employeeName, DATE(th.updated) as dateClosed, COUNT(DATE(th.updated)) as totalClosed
         FROM ticket_history th, users u
-        WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND th.user LIKE :userId AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1';
+        WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND u.name LIKE :employeeName AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1 AND u.enabled = 1 GROUP BY DATE(th.updated)';
 
         $closeReq = $req->getConnection()->prepare($close);
-        $closeReq->bindParam('startDate', $start);
-        $closeReq->bindParam('endDate', $end);
-        $closeReq->bindParam('userId', $user);
+        $closeReq->bindParam('startDate', $startDate);
+        $closeReq->bindParam('endDate', $endDate);
+        $closeReq->bindParam('employeeName', $employeeName);
         $closeReq->execute();
         $closedTickets = ($closeReq->fetchAll());
-        $res = new JsonResponse();
-        $res->headers->set('Content-Type', 'application/json');
-        $res->setData(array('ticketList' => $openTickets, $closedTickets));
-        echo '<p>' . $openTickets[0]['employeeName'] . ' has opened ' . $openTickets[0]['totalTicketsOpened'] . ' ticket and closed ' . $closedTickets[0]['totalTicketsClosed'] . ' ticket between ' . $startDate->format('d-m-Y') . ' and ' . $endDate->format('d-m-Y') . '</p>';
-        die;
+
+        return $this->json(array(
+            'openTickets' => $openTickets,
+            'closedTickets' => $closedTickets
+        ));
     }
 }

@@ -51,17 +51,6 @@
             <WeeklyEmployeePerformance></WeeklyEmployeePerformance>
           </card-base>
         </div>
-        <!--  <div class="col-md-6 col-sm-12 col-xs-12">
-          <card-base>
-            <apex-line-gradient></apex-line-gradient>
-          </card-base>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <card-base>
-            <apex-stacked-columns-100></apex-stacked-columns-100>
-          </card-base>
-        </div> -->
       </q-tab-panel>
       <q-tab-panel
         name="monthly"
@@ -89,17 +78,6 @@
             <MonthlyEmployeePerformance></MonthlyEmployeePerformance>
           </card-base>
         </div>
-        <!-- <div class="col-md-6 col-sm-12 col-xs-12">
-          <card-base>
-            <apex-line-gradient></apex-line-gradient>
-          </card-base>
-        </div>
-        <div class="col-md-6 col-sm-12 col-xs-12">
-        <div class="col-md-6 col-sm-12 col-xs-12">
-          <card-base>
-            <apex-stacked-columns-100></apex-stacked-columns-100>
-          </card-base>
-        </div> -->
       </q-tab-panel>
       <q-tab-panel
       name="rawData"
