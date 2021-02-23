@@ -4,7 +4,7 @@
   <a href="https://github.com/apexcharts/vue-apexcharts#installing-via-npm"><img src="https://shields.io/badge/Charts-ApexCharts-brightgreen.svg" alt="Framework"></a>
 </p>
 
-## ABOUT THE PROJECT
+### About the Project
 
 This project was built with lots of love and coffee, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
 
@@ -15,13 +15,13 @@ The dashboard is divided into 3 tabs : WEEKLY, MONTHLY and RAW DATA
 WEEKLY & MONTHLY display all the graphs & charts, while RAW DATA displays the table
 
 
-## THE GRAPHS AND CHARTS
+### The Graphs & Charts
 
-# ~~~~ TICKET PIE CHART ~~~~ #
+###### ~~~~ TICKET PIE CHART ~~~~
 
 This chart shows the total amount of tickets that are currently open and closed ever since the application was released
 
-# ~~~~ 24 HOUR GRID ~~~~ #
+###### ~~~~ 24 HOUR GRID ~~~~
 
 This graph shows the total amount of tickets that were both opened and closed, grouped by hour
 
@@ -29,7 +29,7 @@ Users can filter by :
 - date
 - employee name
 
-# ~~~~ COMPANY TICKET TRACKER ~~~~ #
+###### ~~~~ COMPANY TICKET TRACKER ~~~~
 
 This graph shows the total amount of tickets that were both opened and closed
 
@@ -39,7 +39,7 @@ Users can filter by :
 - problem name
 - detail name
 
-# ~~~~ EMPLOYEE PERFORMANCE ~~~~ #
+###### ~~~~ EMPLOYEE PERFORMANCE ~~~~
 
 This graph shows the total amount of tickets that were both opened and closed
 
@@ -48,7 +48,7 @@ Users can filter by :
 - employee name
 
 
-# ~~~~ RAW DATA ~~~~ #
+###### ~~~~ RAW DATA ~~~~
 
 This table displays every single ticket that exists in the database
 
@@ -63,7 +63,7 @@ Users can filter by date
 - The default starting date being the 19th of April 2019 (creation date of the first ticket)
 - The default ending date being the current date
 
-## THE STACK
+### The Stack
 
 The backend was built by the company's developpment team with PHP Symfony
 The frontend was built by Paul with Vue and Quasar using a separate server to the backend.
@@ -71,74 +71,74 @@ The frontend was built by Paul with Vue and Quasar using a separate server to th
 To install the backend, please contact either Fabrice or Clovis
 To install the frontend inside the backend, please contact Fabrice
 
+### Developper Documentation
 
-## DEVELOPER DOCUMENTATION
+### Installation procedure
 
-## Installation procedure
-
-# Install the dependencies
+###### Install the dependencies
 ```bash
 npm install
 ```
 
-# Start the app in development mode (hot-code reloading, error reporting, etc.)
+###### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
 ```
 
-# If you get a .babel-src error when trying to start the app, run the following command
+###### If you get a .babel-src error when trying to start the app, run the following command
 ```bash
 npx quasar dev
 ```
 
-# Once the application is successfully launched, you should have localhost:8080 open automatically in your browser
+###### Once the application is successfully launched, you should have localhost:8080 open automatically in your browser
 To access the analytics section, navigate to http://localhost:8080/dashboard
 
 
-# Lint the files
+###### Lint the files
 ```bash
 npm run lint
 ```
 
-# Build the app for production
+###### Build the app for production
 ```bash
 quasar build
 ```
 
-# Customize the configuration
+###### Customize the configuration
 See [Configuring quasar.conf.js](https://quasar.dev/quasar-cli/quasar-conf-js).
 
 
-## Necessary tools to run the standalone frontend :
+### Necessary tools to run the standalone frontend :
 
 All tool versions can be found inside the <a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/package.json">package.json</a> file
 
-# Node.js - https://nodejs.org/
+###### Node.js - https://nodejs.org/
 
 The JavaScript runtime environment
 
-# Npm or Yarn - https://classic.yarnpkg.com/en/docs/install/#windows-stable
+###### Npm or Yarn - https://classic.yarnpkg.com/en/docs/install/#windows-stable
 
 The package manager, up to personal preference
 
-# Vue.js - https://cli.vuejs.org/guide/installation.html
+###### Vue.js - https://cli.vuejs.org/guide/installation.html
 
 The JavaScript frontend framework
 
-# Quasar - https://quasar.dev/quasar-cli/installation
+###### Quasar - https://quasar.dev/quasar-cli/installation
 
 The Vue.js styling library
 
-# Webpack 
+###### Webpack 
 
 The JavaScript package bundler
 
-# ApexCharts - https://github.com/apexcharts/vue-apexcharts#installing-via-npm
+###### ApexCharts - https://github.com/apexcharts/vue-apexcharts#installing-via-npm
 
 The JavaScript chart / graph creation library
 
+<hr />
 
-## HOW THE CODE STRUCTURE WORKS
+### How the code structure works
 
 All of the templating files are located inside the src folder
 
@@ -154,7 +154,7 @@ Ticket-Analytics/
 
 To modify the entire dashboard, you will need to make code changes to dashboard.vue
 For changes to individual graphs, go to their respective file inside the pages/ folder
-
+<hr />
 
 All of the date pickers are controlled by the following button + q-date combination
 ```vue
@@ -171,6 +171,7 @@ All of the date pickers are controlled by the following button + q-date combinat
     </q-btn>
 </template>
 ```
+<hr />
 
 All of the inputs (except for the Pie Chart) are controlled by q-select elements
 ```vue
@@ -186,7 +187,7 @@ All of the inputs (except for the Pie Chart) are controlled by q-select elements
     </q-select>
 </template>
 ```
-
+<hr />
 
 Some of the charts and graphs are located inside q-scroll-areas, this is to allow overflow
 ```vue
@@ -205,6 +206,7 @@ Some of the charts and graphs are located inside q-scroll-areas, this is to allo
     </q-scroll-area>
 </template>
 ```
+<hr />
 
 All of the data is fetched through the routes that are specified in 
 ```vue
@@ -219,6 +221,8 @@ data() {
 </script>
 ```
 It is then appended to the charts and graphs through the :series="series" variable
+
+<hr />
 
 Upon page mount, default dates are set, the routes are dynamically over-written and the first batch of data is fetched
 dateLimit is used to stop the user from selecting a date that is beyond the current date.
@@ -235,6 +239,7 @@ mounted() {
   },
 </script>
 ```
+<hr />
 
 fetchData() is the main function for our components, as it handles every single get request and sets all the content of the page
 ```vue
@@ -256,7 +261,9 @@ methods: {
 ```
 All of the necessary data is appended to our series, and all chartOptions are updated.
 
-A function is declared to control every input. Upon being fired it will post the updated data to the backend and then run fetchData() with the updated parameters
+<hr />
+
+A function is declared to control every input. Upon being fired it will post the updated data to the backend and then run fetchData() with the updated parameters. For instance the function below is the one that is called every time the date is updated through the calendars.
 ```vue
 <script>
 methods: {

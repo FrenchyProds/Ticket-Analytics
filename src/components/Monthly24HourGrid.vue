@@ -39,11 +39,11 @@
           style="minHeight: 250px; height: 300px; width: 700px; max-height: 100%; max-width: 100%;"
           class="bg-grey-1 rounded-borders shadow-2"
         >
-        <card-base>
-          <div style="width: 1200px; min-height: 200px; linear-gradient( 135deg, #343E59 10%, #2B2D3E 40%)">
-            <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
-          </div>
-        </card-base>
+          <card-base>
+            <div style="width: 1200px; min-height: 200px; linear-gradient( 135deg, #343E59 10%, #2B2D3E 40%)">
+              <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
+            </div>
+          </card-base>
         </q-scroll-area>
     </div>
 </template>
