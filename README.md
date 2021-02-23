@@ -17,7 +17,7 @@ WEEKLY & MONTHLY display all the graphs & charts, while RAW DATA displays the ta
 
 ### The Graphs & Charts
 
-<p><a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/readme_screenshots/graphs?raw='true'"></a></p>
+<p><a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/readme_screenshots/graphs.png?raw=true"></a></p>
 
 ###### ~~~~ TICKET PIE CHART ~~~~
 
@@ -52,7 +52,7 @@ Users can filter by :
 
 ###### ~~~~ RAW DATA ~~~~
 
-<p><a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/readme_screenshots/rawData?raw='true'"></a></p>
+<p><a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/readme_screenshots/rawData.png?raw=true"></a></p>
 
 This table displays every single ticket that exists in the database
 
@@ -62,7 +62,7 @@ This table displays every single ticket that exists in the database
 - Users can group the results by using the "GROUP BY" dropdown menu
 - 10 results are shown by default, this can be modified by the user
 - Every column except Ticket id can be toggled on and off by using the "Toggle Column" button
-<p><a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/readme_screenshots/toggleColumns?raw='true'"></a></p>
+<p><a href="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/readme_screenshots/toggleColumns.png?raw=true"></a></p>
 
 Users can filter by date
 - The default starting date being the 19th of April 2019 (creation date of the first ticket)
