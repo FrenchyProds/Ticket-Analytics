@@ -1,6 +1,6 @@
 <template>
     <div>
-      <p class="chartTitle">Tickets opened and closed every hour - Weekly</p>
+      <p class="chartTitle text-primary">Tickets opened and closed every hour - Weekly</p>
         <q-toolbar class="text-center">
         <div class="xs-column">
           <q-btn class="q-mb-1" icon="event" round color="primary">
@@ -14,13 +14,13 @@
               </q-popup-proxy>
           </q-btn>
           <div class="flex content-between column-xs-sm row-md-lg-xl">
-          <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+          <p class="text-primary q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
           
-          <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+          <p class="text-primary q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
         </div>
         </div>
         </q-toolbar>
-        <q-select label-color="white" use-input outlined @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
+        <q-select label-color="primary" use-input outlined @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
             <template v-slot:no-option>
                 <q-item>
                     <q-item-section class="text-grey">
@@ -33,18 +33,9 @@
           <p>There are no tickets for the selected dates</p>
           <p>Please try with another date and/or employee</p>
         </div>
-        <!-- <q-scroll-area
-          v-if="empty == false"
-          horizontal
-          style="minHeight: 250px; height: 300px; width: 2000px; max-height: 100%; max-width: 100%;"
-          class="bg-grey-1 rounded-borders shadow-2"
-        > -->
-        <card-base>
-          <!-- <div style="width: 1200px; min-height: 200px; linear-gradient( 135deg, #343E59 10%, #2B2D3E 40%)"> -->
-          <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
-          <!-- </div> -->
+        <card-base class="q-mb-auto q-mt-auto" v-if="empty == false">
+          <apexchart type="bar" height="350" :options="chartOptions" :series="series" />
         </card-base>
-        <!-- </q-scroll-area> -->
     </div>
 </template>
 
@@ -169,7 +160,7 @@ export default {
                   },
                   type: 'bar',
                 },
-                colors: ['#42A62A', '#f44336'],
+                colors: ['#42A62A', '#06519C'],
                 animations: {
                   enabled: true,
                   easing: 'easeinout',
@@ -197,7 +188,7 @@ export default {
                   text: 'Hourly Ticket Tracker',
                   align: 'left',
                   style: {
-                    color: '#FFF'
+                    color: '#06519C'
                   }
                 },
                 fill: {
@@ -234,7 +225,7 @@ export default {
                   title: {
                     text: 'Hour of the day',
                     style: {
-                      color: '#FFF'
+                      color: '#06519C'
                     }
                   },
                   axisBorder: {
@@ -259,7 +250,7 @@ export default {
                       }
                     },
                     style: {
-                      colors: '#fff'
+                      colors: ['#42A62A', '#06519C'],
                     }
                   },
                 },
@@ -281,13 +272,13 @@ export default {
                   title: {
                     text: 'Tickets',
                     style: {
-                      color: '#FFF'
+                      color: '#06519C'
                     }
                   },
                   labels: {
                     showDuplicates: false,
                     style: {
-                      colors: '#fff'
+                      colors: '#06519C'
                     },
                     formatter: function(value) {
                       if(!isNaN(value)) {
@@ -320,7 +311,7 @@ export default {
               }
           })
         } catch (err) {
-            console.log(err)
+          alert('Oups, something went wrong !' + err)
         }
     },
 
@@ -372,7 +363,7 @@ export default {
             },
             this.fetchData(this.paramRoute))
       } catch(err) {
-        console.log(err)
+        alert('Oups, something went wrong !' + err)
       }
     },
     onChangeUser: async function() {
@@ -405,7 +396,7 @@ export default {
                   },
                   this.fetchData(this.paramRoute))
         } catch(err) {
-            console.log(err)
+          alert('Oups, something went wrong !' + err)
         }
     } 
   }
@@ -439,7 +430,6 @@ input[type="search"] {
 }
 
 .chartTitle {
-    color: white;
     font-size: 1.4rem;
     text-align: center;
 }

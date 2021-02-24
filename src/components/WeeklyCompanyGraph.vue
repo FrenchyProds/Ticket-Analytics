@@ -14,13 +14,13 @@
                     </q-popup-proxy>
                 </q-btn>
                 <div class="flex content-between column-xs-sm row-md-lg-xl">
-                <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+                <p class="text-primary q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
                 
-                <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+                <p class="text-primary q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
             </div>
             </div>
             </q-toolbar>
-            <q-select label-color="white" use-input @input="onChangeCompany()" outlined v-model="selectedCompany" label="Companies" @filter="filterFn" :options="companies">
+            <q-select label-color="primary" use-input @input="onChangeCompany()" outlined v-model="selectedCompany" label="Companies" @filter="filterFn" :options="companies">
                 <template v-slot:no-option>
                     <q-item>
                         <q-item-section class="text-grey">
@@ -29,7 +29,7 @@
                     </q-item>
                 </template>
             </q-select>
-            <q-select  q-select label-color="white" @input="onChangeProblem()" outlined v-model="selectedProblem" label="Problems" @filter="filterFn" :options="problems">
+            <q-select  q-select label-color="primary" @input="onChangeProblem()" outlined v-model="selectedProblem" label="Problems" @filter="filterFn" :options="problems">
                 <template v-slot:no-option>
                     <q-item>
                         <q-item-section class="text-grey">
@@ -38,7 +38,7 @@
                     </q-item>
                 </template>
             </q-select>
-            <q-select v-if=" (selectedProblem !== '' || selectedProblem !== '%')"  q-select label-color="white" @input="onChangeDetail()" outlined v-model="selectedDetail" label="Details" @filter="filterFn" :options="details">
+            <q-select v-if=" (selectedProblem !== '' || selectedProblem !== '%')"  q-select label-color="primary" @input="onChangeDetail()" outlined v-model="selectedDetail" label="Details" @filter="filterFn" :options="details">
                 <template v-slot:no-option>
                     <q-item>
                         <q-item-section class="text-grey">
@@ -52,7 +52,7 @@
                 <p>Please try with another date and/or company</p>
             </div>
             <card-base v-if="empty == false">
-                <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
+                <apexchart type="bar" height="250" :options="chartOptions" :series="series" />
             </card-base>
     </div>
 </template>
@@ -135,7 +135,7 @@ export default {
                             },
                             type: 'bar',
                         },
-                        colors: ['#42A62A', '#f44336'],
+                        colors: ['#42A62A', '#06519C'],
                         animations: {
                             enabled: true,
                             easing: 'easeinout',
@@ -162,7 +162,7 @@ export default {
                             text: 'Weekly Company Tracker',
                             align: 'left',
                             style: {
-                                color: '#FFF'
+                                color: '#06519C'
                             }
                         },
                         fill: {
@@ -188,7 +188,7 @@ export default {
                             title: {
                                 text: 'Date',
                                 style: {
-                                color: '#FFF'
+                                color: '#06519C'
                                 }
                             },
                             axisBorder: {
@@ -209,7 +209,7 @@ export default {
                                     return date.formatDate(timestamp, 'DD/MM');
                                 },
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 }
                             },
                         },
@@ -231,13 +231,13 @@ export default {
                             title: {
                                 text: 'Tickets',
                                 style: {
-                                color: '#FFF'
+                                color: '#06519C'
                                 }
                             },
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -301,7 +301,7 @@ export default {
                     }
                 })
             } catch (error) {
-                console.log(error)
+                alert('Oups, something went wrong !' + error)
             }
         },
 
@@ -365,7 +365,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -379,7 +379,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
             } catch(err) {
-                console.log(err)
+                alert('Oups, something went wrong !' + err)
             }
         },
 
@@ -423,7 +423,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -437,7 +437,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
              } catch (error) {
-                 console.log(error)
+                alert('Oups, something went wrong !' + error)
              }
         },
 
@@ -481,7 +481,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -495,7 +495,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
              } catch (error) {
-                 console.log(error)
+                alert('Oups, something went wrong !' + error)
              }
         },
 
@@ -539,7 +539,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -553,7 +553,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
              } catch (error) {
-                 console.log(error)
+                alert('Oups, something went wrong !' + error)
              }
         }
     }

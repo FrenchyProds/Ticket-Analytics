@@ -14,13 +14,13 @@
               </q-popup-proxy>
           </q-btn>
           <div class="flex content-between column-xs-sm row-md-lg-xl">
-          <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+          <p class="text-primary q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
           
-          <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+          <p class="text-primary q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
         </div>
         </div>
         </q-toolbar>
-        <q-select label-color="white" outlined use-input @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
+        <q-select label-color="primary" outlined use-input @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
             <template v-slot:no-option>
                 <q-item>
                     <q-item-section class="text-grey">
@@ -34,7 +34,7 @@
           <p>Please try with another date and/or employee</p>
         </div>
         <card-base v-if="empty == false">
-          <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
+          <apexchart type="bar" height="360" :options="chartOptions" :series="series" />
         </card-base>
     </div>
 </template>
@@ -108,7 +108,7 @@ export default {
                             stacked: false,
                             horizontal: false,
                         },
-                        colors: ['#42A62A', '#f44336'],
+                        colors: ['#42A62A', '#06519C'],
                         animations: {
                             enabled: true,
                             easing: 'easeinout',
@@ -135,7 +135,7 @@ export default {
                             text: 'Weekly Employee Performance',
                             align: 'left',
                             style: {
-                                color: '#FFF'
+                                color: '#06519C'
                             }
                         },
                         fill: {
@@ -161,7 +161,7 @@ export default {
                             title: {
                                 text: 'Employee Name',
                                 style: {
-                                color: '#FFF'
+                                color: '#06519C'
                                 }
                             },
                             axisBorder: {
@@ -182,7 +182,7 @@ export default {
                                     return date.formatDate(timestamp, 'DD/MM');
                                 },
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 }
                             },
                         },
@@ -204,13 +204,13 @@ export default {
                             title: {
                                 text: 'Tickets',
                                 style: {
-                                color: '#FFF'
+                                color: '#06519C'
                                 }
                             },
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -225,7 +225,6 @@ export default {
                     
                     let open = res.data.openTickets
                     let closed = res.data.closedTickets
-                    console.log(res.data)
                     this.series = [{
                         name: 'Tickets Opened',
                         data: [{ x: "", y: ""}]
@@ -261,9 +260,8 @@ export default {
                         this.series[1].data.push({x: dateCalc + ' GMT', y:0})
                     }
                 })
-                console.log(this.series)
           } catch (error) {
-              console.log(error)
+            alert('Oups, something went wrong !' + error)
           }
       },
 
@@ -317,7 +315,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -331,7 +329,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
             } catch(err) {
-                console.log(err)
+                alert('Oups, something went wrong !' + err)
             }
         },
 
@@ -366,7 +364,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -380,7 +378,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
             } catch(err) {
-                console.log(err)
+                alert('Oups, something went wrong !' + err)
             }
       }
   }

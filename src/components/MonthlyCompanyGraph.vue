@@ -317,7 +317,7 @@ export default {
                     }
                 })
             } catch (error) {
-                console.log(error)
+                alert('Oups, something went wrong !' + error)
             }
         },
 
@@ -395,7 +395,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
             } catch(err) {
-                console.log(err)
+                alert('Oups, something went wrong !' + err)
             }
         },
 
@@ -452,8 +452,8 @@ export default {
                         }
                     },
                     this.fetchData(this.paramRoute))
-             } catch (error) {
-                 console.log(error)
+             } catch (err) {
+                alert('Oups, something went wrong !' + err)
              }
         },
 
@@ -511,7 +511,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
              } catch (error) {
-                 console.log(error)
+                alert('Oups, something went wrong !' + error)
              }
         },
 
@@ -569,7 +569,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
              } catch (error) {
-                 console.log(error)
+                alert('Oups, something went wrong !' + error)
              }
         }
     }

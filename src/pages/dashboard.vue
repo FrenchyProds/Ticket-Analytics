@@ -33,7 +33,7 @@
       >
         <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <TicketPieChart></TicketPieChart>
+            <WeeklyPieChart></WeeklyPieChart>
           </card-base>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -60,7 +60,7 @@
       >
         <div class="col-md-6 col-sm-12 col-xs-12">
           <card-base>
-            <TicketPieChart></TicketPieChart>
+            <MonthlyPieChart></MonthlyPieChart>
           </card-base>
         </div>
         <div class="col-md-6 col-sm-12 col-xs-12">
@@ -95,14 +95,15 @@ export default {
   name: 'PageIndex',
   components: {
     CardBase,
-    TicketPieChart: () => import('components/TicketPieChart'),
+    WeeklyPieChart: () => import('components/WeeklyPieChart'),
+    MonthlyPieChart: () => import('components/MonthlyPieChart'),
     Weekly24HourGrid: () => import('components/Weekly24HourGrid'),
     Monthly24HourGrid: () => import('components/Monthly24HourGrid'),
-    RawData: () => import('components/RawData'),
     WeeklyCompanyGraph: () => import('components/WeeklyCompanyGraph'),
     MonthlyCompanyGraph: () => import('components/MonthlyCompanyGraph'),
     WeeklyEmployeePerformance: () => import('components/WeeklyEmployeePerformance'),
     MonthlyEmployeePerformance: () => import('components/MonthlyEmployeePerformance'),
+    RawData: () => import('components/RawData'),
   },
   data () {
     return {

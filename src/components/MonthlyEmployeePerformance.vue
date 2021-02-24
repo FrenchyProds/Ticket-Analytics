@@ -36,12 +36,12 @@
         <q-scroll-area
           v-if="empty == false"
           horizontal
-          style="minHeight: 250px; height: 300px; width: 700px; max-height: 100%; max-width: 100%;"
+          style="minHeight: 250px; height: 412px; width: 700px; max-height: 100%; max-width: 100%;"
           class="bg-grey-1 rounded-borders shadow-2"
         >
         <card-base>
           <div style="width: 1200px; min-height: 200px; linear-gradient( 135deg, #343E59 10%, #2B2D3E 40%)">
-          <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
+          <apexchart type="bar" height="360" :options="chartOptions" :series="series" />
           </div>
         </card-base>
         </q-scroll-area>
@@ -235,7 +235,6 @@ export default {
                     
                     let open = res.data.openTickets
                     let closed = res.data.closedTickets
-                    console.log(res.data)
                     this.series = [{
                         name: 'Tickets Opened',
                         data: [{ x: "", y: ""}]
@@ -271,9 +270,8 @@ export default {
                         this.series[1].data.push({x: dateCalc + ' GMT', y:0})
                     }
                 })
-                console.log(this.series)
           } catch (error) {
-              console.log(error)
+                alert('Oups, something went wrong !' + error)
           }
       },
 
@@ -341,7 +339,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
             } catch(err) {
-                console.log(err)
+                alert('Oups, something went wrong !' + err)
             }
         },
 
@@ -390,7 +388,7 @@ export default {
                     },
                     this.fetchData(this.paramRoute))
             } catch(err) {
-                console.log(err)
+                alert('Oups, something went wrong !' + err)
             }
       }
   }

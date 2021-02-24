@@ -4,17 +4,17 @@
           <div class="row customRowPosition justify-center items-center">
               <div class="xs-column">
                 <div class="datePicker">
-                <q-btn class="q-mb-1" icon="event" round color="primary">
+                <q-btn class="q-mb-1" icon="event" round color="blue">
                     <q-popup-proxy @before-show="updateStartDate" transition-show="scale" transition-hide="scale">
                         <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="startDate">
                             <div class="row items-center justify-end q-gutter-sm">
-                                <q-btn label="Cancel" color="primary" flat v-close-popup />
-                                <q-btn label="OK" color="primary" flat @click="save" v-close-popup />
+                                <q-btn label="Cancel" color="#42A62A" flat v-close-popup />
+                                <q-btn label="OK" color="#42A62A" flat @click="save" v-close-popup />
                             </div>
                         </q-date>
                     </q-popup-proxy>
                 </q-btn>
-                <q-btn class="q-mb-1" icon="fas fa-calendar-times" round color="primary">
+                <q-btn class="q-mb-1" icon="fas fa-calendar-times" round color="blue">
                     <q-popup-proxy @before-show="updateEndDate" transition-show="scale" transition-hide="scale">
                         <q-date minimal navigation-min-year-month="2019/04" :navigation-max-year-month="dateLimit" v-model="endDate">
                             <div class="row items-center justify-end q-gutter-sm">
@@ -26,9 +26,8 @@
                 </q-btn>
                 </div>
                     <div class="flex content-between column-xs-sm row-md-lg-xl datePicker">
-                        <p class="q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
-                        
-                        <p class="q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+                        <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+                        <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
                     </div>
                 </div>
           <q-btn  label="Toggle Columns" color="primary" @click="modal = true" class="buttonStyle customButtonPosition center" />
@@ -227,12 +226,12 @@ export default {
                         this.dateClosed = fetchData[i].dateClosed
                     } else {
                         this.ageCalc = date.getDateDiff(this.currentDate, fetchData[i].dateCreated, unit) + ' days'
-                        this.dateClosed = "This ticket has not been closed yet !"
+                        this.dateClosed = ""
                     }
                     if(fetchData[i].closedBy) {
                         this.closedBy = fetchData[i].closedBy
                     } else {
-                        this.closedBy = "The ticket has not been closed yet !"
+                        this.closedBy = ""
                     }
                     this.data.push({
                         id: fetchData[i].ticketId,
@@ -252,7 +251,7 @@ export default {
                 console.log(this.data)
             })
           } catch (error) {
-              console.log(error)
+            alert('Oups, something went wrong !' + error)
           }
       },
     updateStartDate() {
@@ -274,7 +273,7 @@ export default {
                     this.fetchData(this.paramRoute)
                 })
         } catch (error) {
-            console.log(error)
+            alert('Oups, something went wrong !' + error)
         }
     },
   }

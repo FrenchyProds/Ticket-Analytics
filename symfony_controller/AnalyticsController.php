@@ -71,8 +71,8 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-        #[Route('/dashboard/ticketpiechart/{problemName}/{detailName}')]
-        public function ticketPieChart(Request $request, $problemName, $detailName) {
+        #[Route('/dashboard/ticketpiechart/{problemName}/{detailName}/{startDate}/{endDate}')]
+        public function ticketPieChart(Request $request, $problemName, $detailName, $startDate, $endDate) {
 
             $req = $this->getDoctrine()->getManager();
 
@@ -86,7 +86,7 @@ class AnalyticsController extends Controller {
             $fetchDetails = $req->createQuery(
                 'SELECT pd.name AS name, pd.id AS id, p.id as parent
                     FROM App\Entity\Problem p, App\Entity\ProblemDetail pd
-                        WHERE pd.problem = p.id AND p.id LIKE :problemId' 
+                        WHERE pd.problem = p.id AND p.name LIKE :problemId' 
             );
             $fetchDetails->setParameter('problemId', $problemName);
             $detailList = $fetchDetails->getResult();
@@ -95,33 +95,27 @@ class AnalyticsController extends Controller {
             $openTicket = $req->createQuery(
                 'SELECT COUNT(t.id) AS countOpenTickets, p.name AS ProblemName, pd.name AS DetailName
                     FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd
-                        WHERE t.ticketstatus = 1 AND t.problem = p.id AND t.problemdetail = pd.id AND p.id LIKE :problemId AND pd.id LIKE :problemDetailId'
+                        WHERE t.ticketstatus = 1 AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND t.created BETWEEN :startDate AND :endDate'
             );
             $openTicket->setParameter('problemId', $problemName)
-                        ->setParameter('problemDetailId', $detailName);
+                        ->setParameter('problemDetailId', $detailName)
+                        ->setParameter('startDate', $startDate)
+                        ->setParameter('endDate', $endDate);
             $responseOpen = $openTicket->getResult();
 
             $closedTicket = $req->createQuery(
                 'SELECT COUNT(t.id) AS countClosedTickets, p.name AS ProblemName, pd.name AS DetailName
                     FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd
-                        WHERE t.ticketstatus = 2 AND t.problem = p.id AND t.problemdetail = pd.id AND p.id LIKE :problemId AND pd.id LIKE :problemDetailId'
+                        WHERE t.ticketstatus = 2 AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND t.created BETWEEN :startDate AND :endDate'
             );
             $closedTicket->setParameter('problemId', $problemName)
-                        ->setParameter('problemDetailId', $detailName);
+                        ->setParameter('problemDetailId', $detailName)
+                        ->setParameter('startDate', $startDate)
+                        ->setParameter('endDate', $endDate);
             $responseClosed = $closedTicket->getResult();
 
             $showOpen = floatval($responseOpen[0]['countOpenTickets']);
             $showClosed = floatval($responseClosed[0]['countClosedTickets']);
-            if($problemName === '%') {
-                $problemName = 'All';
-            } else {
-                $problemName = $responseOpen[0]['ProblemName'];
-            }
-            if($detailName === '%') {
-                $detailName = 'All';
-            } else {
-                $detailName = $responseOpen[0]['DetailName'];
-            }
 
             return $this->json(array('problems' => $problemList,
                                     'details' => $detailList,
@@ -151,9 +145,10 @@ class AnalyticsController extends Controller {
         );
         $userList = $fetchUsers->getResult();
         
-        $openTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as hourOpened, COUNT(HOUR(th.    updated)) AS totalOpened
-                        FROM ticket_history th, users u
-                        WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.name LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY hourOpened';
+        $openTickets = 
+            'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as hourOpened, COUNT(HOUR(th.    updated)) AS totalOpened
+                FROM ticket_history th, users u
+                    WHERE th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.name LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY hourOpened';
         $openReq = $req->getConnection()->prepare($openTickets);
         $openReq->bindParam('userId', $user);
         $openReq->bindParam('startDate', $startDate);
@@ -161,9 +156,10 @@ class AnalyticsController extends Controller {
         $openReq->execute();
         $openTicketsResult = ($openReq->fetchAll());
 
-        $closedTickets = 'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as hourClosed, COUNT(HOUR(th.  updated)) AS totalClosed
-                        FROM ticket_history th, users u
-                        WHERE th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1 AND u.name LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY hourClosed';
+        $closedTickets = 
+            'SELECT th.ticket, u.name AS Employee_Name, th.updated as Updated_At, HOUR(th.updated) as hourClosed, COUNT(HOUR(th.  updated)) AS totalClosed
+                FROM ticket_history th, users u
+                    WHERE th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1 AND u.name LIKE :userId AND th.updated BETWEEN :startDate AND :endDate GROUP BY HOUR(th.updated) ORDER BY hourClosed';
         $closeReq = $req->getConnection()->prepare($closedTickets);
         $closeReq->bindParam('userId', $user);
         $closeReq->bindParam('startDate', $startDate);
@@ -210,9 +206,10 @@ class AnalyticsController extends Controller {
         $openReq->execute();
         $openTicketsResult = ($openReq->fetchAll());
 
-        $closedTickets = 'SELECT th.ticket AS closedTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, ts.id AS ticketStatus, ts.name AS ticketStatusName, DATE(th.updated) AS dateClosed, COUNT(DATE(th.updated)) AS totalClosed
-            FROM ticket t, problem p, problem_detail pd, cust_info ci, ticket_status ts, ticket_history th
-                WHERE th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND t.ticketstatus = 2 AND t.id = th.ticket AND t.custinfo = ci.id AND ts.id = t.ticketstatus AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemName AND pd.name LIKE :detailName AND ci.acct_name LIKE :companyName AND th.updated BETWEEN :startDate AND :endDate GROUP BY DATE(th.updated)';
+        $closedTickets = 
+            'SELECT th.ticket AS closedTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName, ts.id AS ticketStatus, ts.name AS ticketStatusName, DATE(th.updated) AS dateClosed, COUNT(DATE(th.updated)) AS totalClosed
+                FROM ticket t, problem p, problem_detail pd, cust_info ci, ticket_status ts, ticket_history th
+                    WHERE th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND t.ticketstatus = 2 AND t.id = th.ticket AND t.custinfo = ci.id AND ts.id = t.ticketstatus AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemName AND pd.name LIKE :detailName AND ci.acct_name LIKE :companyName AND th.updated BETWEEN :startDate AND :endDate GROUP BY DATE(th.updated)';
         $closedReq = $req->getConnection()->prepare($closedTickets);
         $closedReq->bindParam('problemName', $problemName);
         $closedReq->bindParam('detailName', $detailName);
@@ -227,63 +224,6 @@ class AnalyticsController extends Controller {
             'openTickets' => $openTicketsResult,
             'closedTickets' => $closedTicketsResult
         ));
-
-    }
-
-
-    // ========================================================
-    // ========================================================
-    // ======== DAILY TICKET TRACKER CONTROLLER ===============
-    // ========================================================
-    // ========================================================
-
-    #[Route('/dashboard/dailyTicketTracker')]
-    public function dailyTicketTracker(Request $request) {
-        $req = $this->getDoctrine()->getManager();
-
-        $dev = true;
-        $startDate = new \DateTime('now');
-        $startDate = date_modify($startDate, '-100 day');
-        $endDate = new \DateTime('now');
-        if($dev) {
-            $problem = 1;
-            $problemDetail = 1;
-            $companyName = 49;
-        } else {
-            $problem = '%';
-            $problemDetail = '%';
-            $companyName = '%';
-        }
-
-        $dailyOpenTicketTracker = $req->createQuery(
-            'SELECT COUNT(t.id) AS countOpenTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName
-                FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd, App\Entity\CustInfo ci
-                    WHERE t.created BETWEEN :startDate AND :endDate AND t.ticketstatus = 1 AND t.custinfo = ci.id AND t.problem = p.id AND t.problemdetail = pd.id AND p.id LIKE :problemId AND pd.id LIKE :problemDetailId AND ci.id LIKE :companyName'
-        );
-        $dailyOpenTicketTracker->setParameter('problemId', $problem)
-                    ->setParameter('problemDetailId', $problemDetail)
-                    ->setParameter('companyName', $companyName)
-                    ->setParameter('startDate', $startDate)
-                    ->setParameter('endDate', $endDate);
-        $responseOpen = $dailyOpenTicketTracker->getResult();
-
-        $dailyClosedTicketTracker = $req->createQuery(
-            'SELECT COUNT(t.id) AS countClosedTickets, p.name AS problemName, pd.name AS detailName, ci.acct_name AS companyName
-                FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd, App\Entity\CustInfo ci
-                    WHERE t.created BETWEEN :startDate AND :endDate AND t.ticketstatus = 2 AND t.custinfo = ci.id AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND ci.id LIKE :companyName'
-        );
-        $dailyClosedTicketTracker->setParameter('problemId', $problem)
-                    ->setParameter('problemDetailId', $problemDetail)
-                    ->setParameter('companyName', $companyName)
-                    ->setParameter('startDate', $startDate)
-                    ->setParameter('endDate', $endDate);
-        $responseClosed = $dailyClosedTicketTracker->getResult();
-
-        $res = new JsonResponse();
-        $res->headers->set('Content-Type', 'application/json');
-        $res->setData(array('ticketList' => $dailyOpenTicketTracker));
-        echo '<p>There are have been ' . $responseOpen[0]['countOpenTickets'] . ' tickets opened and ' . $responseClosed[0]['countClosedTickets'] . ' tickets closed for ' . $responseOpen[0]['companyName'] . ' that are due to ' . $responseOpen[0]['problemName'] . ' - ' . $responseOpen[0]['detailName'] . ' between ' . $startDate->format('d-m-Y') . ' and ' . $endDate->format('d-m-Y');
-        die();
     }
 
 
@@ -297,9 +237,10 @@ class AnalyticsController extends Controller {
     public function employeePerformanceTracker(Request $request, $employeeName, $startDate, $endDate) {
         $req = $this->getDoctrine()->getManager();
 
-        $open = 'SELECT th.id AS ticketInfo, u.name AS employeeName, DATE(th.updated) as dateCreated, COUNT(DATE(th.updated)) AS totalCreated
-        FROM ticket_history th, users u
-        WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND u.name LIKE :employeeName AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.enabled = 1 GROUP BY DATE(th.updated)';
+        $open = 
+            'SELECT th.id AS ticketInfo, u.name AS employeeName, DATE(th.updated) as dateCreated, COUNT(DATE(th.updated)) AS totalCreated
+                FROM ticket_history th, users u
+                    WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT min(id) FROM ticket_history GROUP BY ticket ) AND u.name LIKE :employeeName AND th.ticketstatus = 1 AND u.id = th.user AND u.employe = 1 AND u.enabled = 1 GROUP BY DATE(th.updated)';
 
         $openReq = $req->getConnection()->prepare($open);
         $openReq->bindParam('startDate', $startDate);
@@ -308,9 +249,10 @@ class AnalyticsController extends Controller {
         $openReq->execute();
         $openTickets = ($openReq->fetchAll());
 
-        $close = 'SELECT th.ticket AS ticketInfo, u.name AS employeeName, DATE(th.updated) as dateClosed, COUNT(DATE(th.updated)) as totalClosed
-        FROM ticket_history th, users u
-        WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND u.name LIKE :employeeName AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1 AND u.enabled = 1 GROUP BY DATE(th.updated)';
+        $close = 
+            'SELECT th.ticket AS ticketInfo, u.name AS employeeName, DATE(th.updated) as dateClosed, COUNT(DATE(th.updated)) as totalClosed
+                FROM ticket_history th, users u
+                    WHERE th.updated BETWEEN :startDate AND :endDate AND th.id IN ( SELECT max(id) FROM ticket_history GROUP BY ticket ) AND u.name LIKE :employeeName AND th.ticketstatus = 2 AND u.id = th.user AND u.employe = 1 AND u.enabled = 1 GROUP BY DATE(th.updated)';
 
         $closeReq = $req->getConnection()->prepare($close);
         $closeReq->bindParam('startDate', $startDate);

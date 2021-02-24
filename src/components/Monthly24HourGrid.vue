@@ -34,7 +34,7 @@
           <p>Please try with another date and/or employee</p>
         </div>
         <card-base v-if="empty == false">
-            <apexchart v-if="empty == false" type="bar" height="250" :options="chartOptions" :series="series" />
+            <apexchart type="bar" height="350" :options="chartOptions" :series="series" />
         </card-base>
     </div>
 </template>
@@ -312,7 +312,7 @@ export default {
               }
           })
         } catch (err) {
-            console.log(err)
+          alert('Oups, something went wrong !' + err)
         }
     },
 
@@ -364,7 +364,7 @@ export default {
             },
             this.fetchData(this.paramRoute))
       } catch(err) {
-        console.log(err)
+        alert('Oups, something went wrong !' + err)
       }
     },
     onChangeUser: async function() {
@@ -397,7 +397,7 @@ export default {
                   },
                   this.fetchData(this.paramRoute))
         } catch(err) {
-            console.log(err)
+           alert('Oups, something went wrong !' + err)
         }
     } 
   }
