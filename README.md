@@ -8,7 +8,7 @@
 
 ### About the Project
 
-This project was built with lots of <img style="max-width: 30px; max-height: 30px" src="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/icons/heart-solid.svg?raw=true"></img> and <img style="max-width: 30px; max-height: 30px" src="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/icons/coffee-solid.svg?raw=true"></img>, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
+This project was built with lots of love and coffee, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
 
 Its purpose is to provide analytical information regarding the company's ticketing application
 
