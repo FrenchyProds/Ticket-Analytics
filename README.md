@@ -1,6 +1,6 @@
 # Analytics Dashboard
 
-<p align="center">
+<p>
   <a href="https://cli.vuejs.org/guide/installation.html"><img src="https://shields.io/badge/Framework-Vue.js-brightgreen.svg" alt="Framework"></a>
   <a href="https://quasar.dev/quasar-cli/installation"><img src="https://shields.io/badge/Styling-Quasar-brightgreen.svg" alt="Framework"></a>
   <a href="https://github.com/apexcharts/vue-apexcharts#installing-via-npm"><img src="https://shields.io/badge/Charts-ApexCharts-brightgreen.svg" alt="Framework"></a>
@@ -8,7 +8,7 @@
 
 ### About the Project
 
-This project was built with lots of <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i>, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
+This project was built with lots of <img src="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/icons/heart-solid.svg?raw=true"></img> and <img src="https://github.com/FrenchyProds/Ticket-Analytics/blob/main/assets/icons/coffee-solid.svg?raw=true"></img>, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
 
 Its purpose is to provide analytical information regarding the company's ticketing application
 
