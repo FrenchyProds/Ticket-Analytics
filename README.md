@@ -1,3 +1,5 @@
+# Analytics Dashboard
+
 <p align="center">
   <a href="https://cli.vuejs.org/guide/installation.html"><img src="https://shields.io/badge/Framework-Vue.js-brightgreen.svg" alt="Framework"></a>
   <a href="https://quasar.dev/quasar-cli/installation"><img src="https://shields.io/badge/Styling-Quasar-brightgreen.svg" alt="Framework"></a>
@@ -6,7 +8,7 @@
 
 ### About the Project
 
-This project was built with lots of love and coffee, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
+This project was built with lots of <i class="fas fa-heart"></i> and <i class="fas fa-coffee"></i>, for Isocel Télécom Bénin, by Paul "Frenchy" Yves-Menager
 
 Its purpose is to provide analytical information regarding the company's ticketing application
 
@@ -71,12 +73,13 @@ Users can filter by date
 ### The Stack
 
 The backend was built by the company's developpment team with PHP Symfony
+
 The frontend was built by Paul with Vue and Quasar using a separate server to the backend.
 
-To install the backend, please contact either Fabrice or Clovis
-To install the frontend inside the backend, please contact Fabrice
 
-### Developper Documentation
+<hr />
+
+# Developper Documentation
 
 ### Installation procedure
 
@@ -158,6 +161,7 @@ Ticket-Analytics/
 ```
 
 To modify the entire dashboard, you will need to make code changes to dashboard.vue
+
 For changes to individual graphs, go to their respective file inside the pages/ folder
 <hr />
 
@@ -230,6 +234,7 @@ It is then appended to the charts and graphs through the :series="series" variab
 <hr />
 
 Upon page mount, default dates are set, the routes are dynamically over-written and the first batch of data is fetched
+
 dateLimit is used to stop the user from selecting a date that is beyond the current date.
 ```vue
 <script>
@@ -246,7 +251,7 @@ mounted() {
 ```
 <hr />
 
-fetchData() is the main function for our components, as it handles every single get request and sets all the content of the page
+fetchData() is the main function for our components, as it handles every single get request and sets all page content
 ```vue
 <script>
 methods: {

@@ -38,7 +38,7 @@
                     </q-item>
                 </template>
             </q-select>
-            <q-select v-if=" (selectedProblem !== '' || selectedProblem !== '%')"  q-select label-color="white" @input="onChangeDetail()" outlined v-model="selectedDetail" label="Details" @filter="filterFn" :options="details">
+            <q-select q-select label-color="white" @input="onChangeDetail()" outlined v-model="selectedDetail" label="Details" @filter="filterFn" :options="details">
                 <template v-slot:no-option>
                     <q-item>
                         <q-item-section class="text-grey">
