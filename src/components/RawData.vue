@@ -70,7 +70,7 @@
     :columns="columns"
     separator="cell"
     :global_search="true"
-    file_name="raw_data"
+    :file_name="fileName"
     :fullscreen="true"
     :groupby_filter="true"
     :csv_download="true"
@@ -100,6 +100,8 @@ export default {
         ageCalc: '',
         closedBy: '',
         dateClosed: '',
+        currentDate: '',
+        fileName: '',
         pagination: {
             rowsPerPage: 10,
         },
@@ -201,6 +203,8 @@ export default {
     this.dateLimit = date.formatDate(this.currentDate, 'YYYY/MM')
     this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
     this.startDate = '2019-04-19'
+    this.currentDate = date.formatDate(this.currentDate, 'DD-MM-YYYY HH-mm-ss')
+    this.fileName = "raw_data_" + this.currentDate
     this.paramRoute = this.startDate + '/' + this.endDate
     this.fetchData();
   },

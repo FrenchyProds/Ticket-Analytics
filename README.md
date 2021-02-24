@@ -23,7 +23,12 @@ WEEKLY & MONTHLY display all the graphs & charts, while RAW DATA displays the ta
 
 ###### ~~~~ TICKET PIE CHART ~~~~
 
-This chart shows the total amount of tickets that are currently open and closed ever since the application was released
+This chart shows the total amount of tickets that are currently open and closed
+
+Users can filter by :
+- date
+- problem
+- detail
 
 ###### ~~~~ 24 HOUR GRID ~~~~
 

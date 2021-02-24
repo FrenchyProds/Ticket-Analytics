@@ -1,7 +1,13 @@
 <template>
   <q-page class="container bg custom-color">
-      <q-header elevated class="shadow-8 full-width row wrap bg custom-color justify-center">
+      <q-header elevated class="shadow-8 full-width row wrap bg custom-color print-hide justify-center">
         <q-toolbar class="bg custom-color">
+            <q-btn
+            class="absolute-left"
+            style="background: #06519C"
+            @click="print()"
+            icon="fas fa-print"
+            />
             <q-toolbar-title class="absolute-center">
             Analytics Dashboard
             </q-toolbar-title>
@@ -140,23 +146,30 @@ export default {
       this.$q.loading.hide()
     }, 1300)
     },
+
     toggleWeek() {
       this.week = true;
       this.month = false;
       this.rawData = false;
       this.spinner();
     },
+
     toggleMonth() {
       this.week = false;
       this.month = true;
       this.rawData = false;
       this.spinner();
     },
+
     toggleRawData() {
       this.week = false;
       this.month = false;
       this.rawData = true;
       this.spinner();
+    },
+
+    print() {
+      window.print();
     }
   }
 }
