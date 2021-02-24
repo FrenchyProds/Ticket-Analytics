@@ -3,7 +3,7 @@
         <div v-if="loading">
         </div>
         <div v-else>
-            <p class="chartTitle">Total open and closed tickets up to {{currentDate}}</p>
+            <p class="chartTitle text-primary">Total open and closed tickets up to {{currentDate}}</p>
             <form method="get" name="selectProblem">
                 <select v-model="selectedProblem" @change="onChange()" class="problems" name="problems">
                     <option selected value="All">All</option>
@@ -54,10 +54,10 @@ export default {
             }
             },
             title: {
-            text: 'Ticket Tracker',
-            align: 'center',
-            style: {
-                color: '#FFF'
+                text: 'Ticket Tracker',
+                align: 'center',
+                style: {
+                    color: '#06519C'
             }
             },
             labels: ['Open Tickets', 'Closed Tickets'],
@@ -77,7 +77,7 @@ export default {
             }],
             legend: {
             labels: {
-                colors: '#FFF'
+                colors: '#06519C'
             }
             }
         }
@@ -117,7 +117,7 @@ export default {
                         },
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
-                        colors: ['#42A62A', '#f44336'],
+                        colors: ['#42A62A', '#06519C'],
                         responsive: [{
                         breakpoint: 480,
                         options: {
@@ -131,7 +131,7 @@ export default {
                         }],
                         legend: {
                         labels: {
-                            colors: '#FFF'
+                            colors: '#06519C'
                         }
                         }
                     }
@@ -180,7 +180,7 @@ export default {
                         },
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
-                        colors: ['#42A62A', '#f44336'],
+                        colors: ['#42A62A', '#06519C'],
                         responsive: [{
                         breakpoint: 480,
                         options: {
@@ -194,7 +194,7 @@ export default {
                         }],
                         legend: {
                         labels: {
-                            colors: '#FFF'
+                            colors: '#06519C'
                         }
                         }
                     }
@@ -238,7 +238,7 @@ export default {
                         },
                         },
                         labels: ['Open Tickets', 'Closed Tickets'],
-                        colors: ['#42A62A', '#f44336'],
+                        colors: ['#42A62A', '#06519C'],
                         responsive: [{
                         breakpoint: 480,
                         options: {
@@ -252,7 +252,7 @@ export default {
                         }],
                         legend: {
                         labels: {
-                            colors: '#FFF'
+                            colors: '#06519C'
                         }
                         }
                     }
@@ -316,7 +316,7 @@ form:nth-child(odd) {
 }
 
 .apexcharts-legend-text {
-    color: white !important;
+    color: #06519C !important;
 }
 
 .apexcharts-canvas {
@@ -329,7 +329,7 @@ form:nth-child(odd) {
 }
 
 .chartTitle {
-    color: white;
+    color: #06519C;
     font-size: 1.4rem;
     text-align: center;
     text-transform: uppercase;

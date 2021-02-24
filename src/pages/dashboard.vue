@@ -1,5 +1,5 @@
 <template>
-  <q-page class="container" style="background: #06519C;">
+  <q-page class="container bg custom-color">
       <q-header elevated class="shadow-8 full-width row wrap bg custom-color justify-center">
         <q-toolbar class="bg custom-color">
             <q-toolbar-title class="absolute-center">
@@ -164,5 +164,9 @@ export default {
 <style>
 .custom-green {
   color: white;
+}
+
+.q-panel-parent {
+  background-color: #3a8bdd;
 }
 </style>

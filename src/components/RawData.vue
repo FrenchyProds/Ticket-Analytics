@@ -100,6 +100,7 @@ export default {
         dateLimit: '',
         ageCalc: '',
         closedBy: '',
+        dateClosed: '',
         pagination: {
             rowsPerPage: 10,
         },
@@ -175,7 +176,7 @@ export default {
             label: 'Ticket Comment',
             field: 'comment',
             sortable: false,
-            style: 'max-width: 300px; overflowX: scroll; word-break: break;',
+            style: 'max-width: 300px; overflowX: auto; word-break: break;',
             align: 'left',
         },
         {
@@ -223,8 +224,10 @@ export default {
                 for (let i = 0; i < fetchData.length; i++) {
                     if(fetchData[i].dateClosed) {
                         this.ageCalc = date.getDateDiff(fetchData[i].dateClosed, fetchData[i].dateCreated, unit) + ' days'
+                        this.dateClosed = fetchData[i].dateClosed
                     } else {
                         this.ageCalc = date.getDateDiff(this.currentDate, fetchData[i].dateCreated, unit) + ' days'
+                        this.dateClosed = "This ticket has not been closed yet !"
                     }
                     if(fetchData[i].closedBy) {
                         this.closedBy = fetchData[i].closedBy
@@ -240,7 +243,7 @@ export default {
                         ticketStatus: fetchData[i].ticketStatus,
                         created: fetchData[i].dateCreated,
                         createdBy: fetchData[i].createdBy,
-                        closed: fetchData[i].dateClosed,
+                        closed: this.dateClosed,
                         closedBy: this.closedBy,
                         age: this.ageCalc,
                         comment: fetchData[i].ticketSubject

@@ -1,6 +1,6 @@
 <template>
     <div>
-      <p class="chartTitle">Employee Performance - Monthly</p>
+      <p class="chartTitle text-primary">Employee Performance - Monthly</p>
         <q-toolbar class="text-center">
         <div class="xs-column">
           <q-btn class="q-mb-1" icon="event" round color="primary">
@@ -14,13 +14,13 @@
               </q-popup-proxy>
           </q-btn>
           <div class="flex content-between column-xs-sm row-md-lg-xl">
-          <p class="text-white q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+          <p class="text-primary q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
           
-          <p class="text-white q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+          <p class="text-primary q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
         </div>
         </div>
         </q-toolbar>
-        <q-select label-color="white" outlined use-input @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
+        <q-select label-color="primary" outlined use-input @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">
             <template v-slot:no-option>
                 <q-item>
                     <q-item-section class="text-grey">
@@ -118,7 +118,7 @@ export default {
                             stacked: false,
                             horizontal: false,
                         },
-                        colors: ['#42A62A', '#f44336'],
+                        colors: ['#42A62A', '#06519C'],
                         animations: {
                             enabled: true,
                             easing: 'easeinout',
@@ -145,7 +145,7 @@ export default {
                             text: 'Monthly Employee Performance',
                             align: 'left',
                             style: {
-                                color: '#FFF'
+                                color: '#06519C'
                             }
                         },
                         fill: {
@@ -167,10 +167,11 @@ export default {
                         },
                         xaxis: {
                             type: 'datetime',
+                            tickAmount: 31,
                             title: {
                                 text: 'Employee Name',
                                 style: {
-                                    color: '#FFF'
+                                    color: '#06519C'
                                 },
                             },
                             axisBorder: {
@@ -186,9 +187,12 @@ export default {
                                 showDuplicates: false,
                                 show: true,
                                 // rotateAlways: true,
-                                format: 'dd/MM',
+                                // format: 'dd/MM',
+                                formatter: function(val, timestamp) {
+                                    return date.formatDate(timestamp, 'DD/MM');
+                                },
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 }
                             },
                         },
@@ -210,13 +214,13 @@ export default {
                             title: {
                                 text: 'Tickets',
                                 style: {
-                                color: '#FFF'
+                                color: '#06519C'
                                 }
                             },
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -323,7 +327,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
@@ -372,7 +376,7 @@ export default {
                             labels: {
                                 showDuplicates: false,
                                 style: {
-                                colors: '#fff'
+                                colors: '#06519C'
                                 },
                                 formatter: function(value) {
                                     if(!isNaN(value)) {
