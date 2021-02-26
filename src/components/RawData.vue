@@ -142,14 +142,12 @@ export default {
             name: 'ticketLevel', 
             label: 'Ticket Level', 
             field: 'ticketLevel',
-            grouping: true
         },
         {
             name: 'ticketStatus', 
             label: 'Ticket Status', 
             field: 'ticketStatus',
             sortable: true,
-            grouping: true,
             classes: ''
         },
         {
@@ -221,7 +219,6 @@ export default {
                 headers: { 'Content-Type': 'application/json' },
                 crossdomain: true
             }).then(res => {
-                console.log(this.url + this.paramRoute)
                 let fetchData = res.data.response
                 let unit = 'days'
                 for (let i = 0; i < fetchData.length; i++) {
@@ -252,18 +249,11 @@ export default {
                         comment: fetchData[i].ticketSubject
                     })
                 }
-                console.log(this.data)
             })
           } catch (error) {
             alert('Oups, something went wrong !' + error)
           }
       },
-    updateStartDate() {
-
-    },
-    updateEndDate() {
-
-    },
     save() {
         try {
             this.paramRoute = date.formatDate(this.startDate, 'YYYY-MM-DD') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD')
@@ -344,6 +334,5 @@ export default {
             padding: 0.3rem 0rem;
         } 
     }
-
-
+    
 </style> 

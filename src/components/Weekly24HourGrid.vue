@@ -14,10 +14,9 @@
               </q-popup-proxy>
           </q-btn>
           <div class="flex content-between column-xs-sm row-md-lg-xl">
-          <p class="text-primary q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
-          
-          <p class="text-primary q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
-        </div>
+            <p class="text-primary q-mb-none"><span class="dates">Start Date</span> : {{ startDate }}</p>
+            <p class="text-primary q-mb-none"><span class="dates">End Date</span> : {{ endDate }}</p>
+          </div>
         </div>
         </q-toolbar>
         <q-select label-color="primary" use-input outlined @input="onChangeUser()" v-model="selectedUser" label="Users" @filter="filterFn" :options="users">

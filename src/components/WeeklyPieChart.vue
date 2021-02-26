@@ -175,8 +175,6 @@ export default {
                         this.companies.push(res.data.closedTicketDetail[i].companyName)
                     }
                 }
-                console.log(this.companies)
-                console.log(res.data)
             })
         } catch (err) {
             alert('Oups, something went wrong !' + err)
@@ -243,7 +241,6 @@ export default {
                         this.companies.push(res.data.closedTicketDetail[i].companyName)
                     }
                 }
-                console.log(this.series[0])
             })
         } catch (err) {
             alert('Oups, something went wrong !' + err)
