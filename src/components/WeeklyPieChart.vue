@@ -40,6 +40,15 @@
                     </q-item>
                 </template>
             </q-select>
+             <q-select label-color="primary" use-input outlined @input="onChangeCompany()" v-model="selectedCompany" label="Company" @filter="filterFn" :options="companies">
+                <template v-slot:no-option>
+                    <q-item>
+                        <q-item-section class="text-grey">
+                        No results
+                        </q-item-section>
+                    </q-item>
+                </template>
+            </q-select>
             <div class="chartRender" v-if="openTickets || closedTickets != 0">
                 <apexchart id="ticketPieChart" type="pie" height="300" width="100%" :options="chartOptions" :series="series"></apexchart>
             </div>
@@ -62,6 +71,9 @@ export default {
         series: ['', ''],
         details: [],
         selectedProblem: '',
+        companies: [],
+        routeCompany: '',
+        selectedCompany: '',
         routeProblem: '',
         selectedDetail: '',
         routeDetail: '',
@@ -74,26 +86,24 @@ export default {
         currentDateMinus: '',
         dateLimit: '',
         dataUrl: 'http://192.168.8.85:8000/dashboard/ticketpiechart/',
-        paramRoute: '%/%/%/%',
+        paramRoute: '',
         chartOptions: {},
     }
   },
-  mounted () {
-    this.fetchData()
+  mounted() {
     this.currentDate = new Date();
     this.currentDate = date.formatDate(this.currentDate, 'dddd MMM DD YYYY')
     this.dateLimit = date.formatDate(this.currentDate, 'YYYY/MM')
     this.endDate = date.formatDate(this.currentDate, 'YYYY-MM-DD')
     this.currentDateMinus = date.subtractFromDate(this.currentDate, { days: 7 })
     this.startDate = date.formatDate(this.currentDateMinus, 'YYYY-MM-DD')
+    this.paramRoute = '%/%/%/' + this.startDate + '/' + this.endDate
+    this.fetchData()
     this.loading = false;
   },
   methods: {
       fetchData: async function() {
           try {
-            if(!this.paramRoute) {
-                this.paramRoute = '%/%/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
-            }
             this.$axios.get(this.dataUrl + this.paramRoute  , {
                 headers: { 'Content-Type': 'application/json' },
                 crossdomain: true
@@ -101,8 +111,12 @@ export default {
                 ).then(res => {
                 const getProblems = res.data.problems
                 const getDetails = res.data.details
+                this.details = []
+                this.problems = []
                 for (let i = 0; i < getProblems.length; i++) {
-                    this.problems.push(getProblems[i].name)
+                    if(this.problems.indexOf(getProblems[i]) == -1) {
+                        this.problems.push(getProblems[i].name)
+                    }
                 }
                 if(getDetails) {
                     for (let i = 0; i < getDetails.length; i++) {
@@ -119,7 +133,7 @@ export default {
                         }
                     },
                         title: {
-                            text: 'Ticket Tracker',
+                            text: 'Weekly Ticket Tracker',
                             align: 'center',
                             style: {
                                 color: '#06519C'
@@ -147,10 +161,22 @@ export default {
                             }
                         }
                 }
-                this.series[0] = res.data.openTickets
-                this.openTickets = res.data.openTickets
-                this.series[1] = res.data.closedTickets
-                this.closedTickets = res.data.closedTickets
+                this.series[0] = res.data.openTicketDetail.length
+                this.openTickets = res.data.openTicketDetail.length
+                this.series[1] = res.data.closedTicketDetail.length
+                this.closedTickets = res.data.closedTicketDetail.length
+                for (let i = 0; i < res.data.openTicketDetail.length; i++) {
+                    if(this.companies.indexOf(res.data.openTicketDetail[i].companyName) == -1) {
+                        this.companies.push(res.data.openTicketDetail[i].companyName)
+                    }
+                }
+                for (let i = 0; i < res.data.closedTicketDetail.length; i++) {
+                    if(this.companies.indexOf(res.data.closedTicketDetail[i].companyName) == -1) {
+                        this.companies.push(res.data.closedTicketDetail[i].companyName)
+                    }
+                }
+                console.log(this.companies)
+                console.log(res.data)
             })
         } catch (err) {
             alert('Oups, something went wrong !' + err)
@@ -167,7 +193,12 @@ export default {
             if(this.selectedDetail != "") {
                 this.selectedDetail = ""
             }
-                this.$axios.get(this.dataUrl + this.routeProblem +  '/%/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')  , {
+            if(!this.selectedCompany) {
+                this.routeCompany = "%"
+            } else {
+                this.routeCompany = this.selectedCompany
+            }
+                this.$axios.get(this.dataUrl + this.routeProblem +  '/%/' + this.routeCompany + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')  , {
                 headers: { 'Content-Type': 'application/json' },
                 crossdomain: true
                 }
@@ -177,7 +208,9 @@ export default {
                 this.problems = []
                 this.details = []
                 for (let i = 0; i < getProblems.length; i++) {
-                    this.problems.push(getProblems[i].name)
+                    if(this.problems.indexOf(getProblems[i]) == -1) {
+                        this.problems.push(getProblems[i].name)
+                    }
                 }
                 if(getDetails) {
                     for (let i = 0; i < getDetails.length; i++) {
@@ -195,10 +228,22 @@ export default {
                             }
                         }
                     }
-                this.series[0] = res.data.openTickets
-                this.openTickets = res.data.openTickets
-                this.series[1] = res.data.closedTickets
-                this.closedTickets = res.data.closedTickets
+                this.series[0] = res.data.openTicketDetail.length
+                this.openTickets = res.data.openTicketDetail.length
+                this.series[1] = res.data.closedTicketDetail.length
+                this.closedTickets = res.data.closedTicketDetail.length
+                this.companies = []
+                for (let i = 0; i < res.data.openTicketDetail.length; i++) {
+                    if(this.companies.indexOf(res.data.openTicketDetail[i].companyName) == -1) {
+                        this.companies.push(res.data.openTicketDetail[i].companyName)
+                    }
+                }
+                for (let i = 0; i < res.data.closedTicketDetail.length; i++) {
+                    if(this.companies.indexOf(res.data.closedTicketDetail[i].companyName) == -1) {
+                        this.companies.push(res.data.closedTicketDetail[i].companyName)
+                    }
+                }
+                console.log(this.series[0])
             })
         } catch (err) {
             alert('Oups, something went wrong !' + err)
@@ -216,9 +261,15 @@ export default {
                 this.routeDetail = '%'
             } else {
                 this.routeDetail = this.selectedDetail
-                } this.$axios.get(this.dataUrl + this.routeProblem +  '/' + this.routeDetail + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')  , {
-                    headers: { 'Content-Type': 'application/json' },
-                    crossdomain: true
+            } 
+            if(!this.selectedCompany) {
+                this.routeCompany = "%"
+            } else {
+                this.routeCompany = this.selectedCompany
+            }
+            this.$axios.get(this.dataUrl + this.routeProblem +  '/' + this.routeDetail + '/' + this.routeCompany + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')  , {
+            headers: { 'Content-Type': 'application/json' },
+            crossdomain: true
                 }).then(res => {
                 const getProblems = res.data.problems
                 const getDetails = res.data.details
@@ -243,10 +294,21 @@ export default {
                             }
                         }
                     }
-                this.series[0] = res.data.openTickets
-                this.openTickets = res.data.openTickets
-                this.series[1] = res.data.closedTickets
-                this.closedTickets = res.data.closedTickets
+                this.series[0] = res.data.openTicketDetail.length
+                this.openTickets = res.data.openTicketDetail.length
+                this.series[1] = res.data.closedTicketDetail.length
+                this.closedTickets = res.data.closedTicketDetail.length
+                this.companies = []
+                for (let i = 0; i < res.data.openTicketDetail.length; i++) {
+                    if(this.companies.indexOf(res.data.openTicketDetail[i].companyName) == -1) {
+                        this.companies.push(res.data.openTicketDetail[i].companyName)
+                    }
+                }
+                for (let i = 0; i < res.data.closedTicketDetail.length; i++) {
+                    if(this.companies.indexOf(res.data.closedTicketDetail[i].companyName) == -1) {
+                        this.companies.push(res.data.closedTicketDetail[i].companyName)
+                    }
+                }
             })
         } catch (err) {
             alert('Oups, something went wrong !' + err)
@@ -267,7 +329,12 @@ export default {
         } else {
             this.routeDetail = this.selectedDetail
         }
-        this.paramRoute = this.routeProblem + '/' + this.routeDetail + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
+        if(!this.selectedCompany) {
+                this.routeCompany = "%"
+        } else {
+            this.routeCompany = this.selectedCompany
+        }
+        this.paramRoute = this.routeProblem + '/' + this.routeDetail + '/' + this.routeCompany + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
         this.$axios.post(this.dataUrl + this.paramRoute  , {
           headers: { 'Content-Type': 'application/json' },
           crossdomain: true
@@ -282,6 +349,7 @@ export default {
                         }
                     }
             },
+            this.companies = [],
             this.fetchData(this.paramRoute))
       } catch(error) {
           alert('Oups, something went wrong !' + error)
@@ -312,7 +380,12 @@ export default {
             } else {
                 this.routeProblem = this.selectedProblem;
             }
-            await this.$axios.post(this.dataUrl + this.routeProblem +  '/%/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss'), 
+            if(!this.selectedCompany) {
+                this.routeCompany = "%"
+            } else {
+                this.routeCompany = this.selectedCompany
+            }
+            await this.$axios.post(this.dataUrl + this.routeProblem +  '/%/' + this.routeCompany + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss'), 
             ).then(this.fetchByProblem())
         } catch (err) {
             alert('Oups, something went wrong !' + err)
@@ -326,11 +399,54 @@ export default {
             } else {
                 this.routeDetail = this.selectedDetail;
             }
-            await this.$axios.post(this.dataUrl + this.routeProblem +  '/' + this.routeDetail  + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss'),
+            if(!this.selectedCompany) {
+                this.routeCompany = "%"
+            } else {
+                this.routeCompany = this.selectedCompany
+            }
+            await this.$axios.post(this.dataUrl + this.routeProblem +  '/' + this.routeDetail + '/' + this.routeCompany + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss'),
             ).then(this.fetchByDetail())
         } catch (err) {
             alert('Oups, something went wrong !' + err)
         }
+      },
+
+      onChangeCompany: async function() {
+          try {
+            if(!this.selectedProblem) {
+                this.routeProblem = '%'
+            } else {
+                this.routeProblem = this.selectedProblem;
+            }
+            if(!this.selectedDetail) {
+                this.routeDetail = '%'
+            } else {
+                this.routeDetail = this.selectedDetail;
+            }
+            if(!this.selectedCompany) {
+                this.routeCompany = "%"
+            } else {
+                this.routeCompany = this.selectedCompany
+            }
+            this.paramRoute = this.routeProblem + '/' + this.routeDetail + '/' + this.routeCompany + '/' + date.formatDate(this.startDate, 'YYYY-MM-DD HH:mm:ss') + '/' + date.formatDate(this.endDate, 'YYYY-MM-DD HH:mm:ss')
+        this.$axios.post(this.dataUrl + this.paramRoute  , {
+          headers: { 'Content-Type': 'application/json' },
+          crossdomain: true
+          }
+          ).then(
+            this.chartOptions = {
+                labels: ['Open Tickets', 'Closed Tickets'],
+                    colors: ['#42A62A', '#06519C'],
+                    legend: {
+                        labels: {
+                            colors: ['#42A62A', '#06519C'],
+                        }
+                    }
+            },
+            this.fetchData(this.paramRoute))
+          } catch (error) {
+              alert('Oups, something went wrong !' + error)
+          }
       },
 
     spinner() {

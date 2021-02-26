@@ -256,11 +256,12 @@ rawdata:
         endDate: '%'
 
 ticketPieChart:
-    path: /dashboard/ticketpiechart/{problemName}/{detailName}/{startDate}/{endDate}
+    path: /dashboard/ticketpiechart/{problemName}/{detailName}/{companyName}/{startDate}/{endDate}
     controller: App\Controller\AnalyticsController::ticketPieChart
     defaults:
         problemName: '%'
         detailName: '%'
+        companyName: '%'
         startDate: '%'
         endDate: '%'
     requirements:

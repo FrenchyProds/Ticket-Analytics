@@ -29,6 +29,7 @@ Users can filter by :
 - date
 - problem
 - detail
+- company name
 
 ###### ~~~~ 24 HOUR GRID ~~~~
 

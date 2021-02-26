@@ -34,7 +34,7 @@
           <p>Please try with another date and/or employee</p>
         </div>
         <card-base class="q-mb-auto q-mt-auto" v-if="empty == false">
-          <apexchart type="bar" height="350" :options="chartOptions" :series="series" />
+          <apexchart type="bar" height="400" :options="chartOptions" :series="series" />
         </card-base>
     </div>
 </template>

@@ -71,10 +71,10 @@ class AnalyticsController extends Controller {
     // ========================================================
     // ========================================================
 
-        #[Route('/dashboard/ticketpiechart/{problemName}/{detailName}/{startDate}/{endDate}')]
-        public function ticketPieChart(Request $request, $problemName, $detailName, $startDate, $endDate) {
+        #[Route('/dashboard/ticketpiechart/{problemName}/{detailName}/{companyName}/{startDate}/{endDate}')]
+        public function ticketPieChart(Request $request, $problemName, $detailName, $companyName, $startDate, $endDate) {
 
-            $req = $this->getDoctrine()->getManager();
+            $req = $this->getDoctrine()->getManager();  
 
             $fetchProblems = $req->createQuery(
                 'SELECT p.name AS name, p.id AS id
@@ -93,34 +93,33 @@ class AnalyticsController extends Controller {
             }
 
             $openTicket = $req->createQuery(
-                'SELECT COUNT(t.id) AS countOpenTickets, p.name AS ProblemName, pd.name AS DetailName
-                    FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd
-                        WHERE t.ticketstatus = 1 AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND t.created BETWEEN :startDate AND :endDate'
+                'SELECT t.id AS countOpenTickets, p.name AS ProblemName, pd.name AS DetailName, ci.acct_name AS companyName
+                    FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd, App\Entity\CustInfo ci
+                        WHERE t.ticketstatus = 1 AND t.problem = p.id AND t.problemdetail = pd.id AND t.custinfo = ci.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND ci.acct_name LIKE :companyName AND t.created BETWEEN :startDate AND :endDate'
             );
             $openTicket->setParameter('problemId', $problemName)
                         ->setParameter('problemDetailId', $detailName)
+                        ->setParameter('companyName', $companyName)
                         ->setParameter('startDate', $startDate)
                         ->setParameter('endDate', $endDate);
             $responseOpen = $openTicket->getResult();
 
             $closedTicket = $req->createQuery(
-                'SELECT COUNT(t.id) AS countClosedTickets, p.name AS ProblemName, pd.name AS DetailName
-                    FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd
-                        WHERE t.ticketstatus = 2 AND t.problem = p.id AND t.problemdetail = pd.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND t.created BETWEEN :startDate AND :endDate'
+                'SELECT t.id AS countClosedTickets, p.name AS ProblemName, pd.name AS DetailName, ci.acct_name AS companyName
+                    FROM App\Entity\Ticket t, App\Entity\Problem p, App\Entity\ProblemDetail pd, App\Entity\CustInfo ci
+                        WHERE t.ticketstatus = 2 AND t.problem = p.id AND t.problemdetail = pd.id AND t.custinfo = ci.id AND p.name LIKE :problemId AND pd.name LIKE :problemDetailId AND ci.acct_name LIKE :companyName AND t.created BETWEEN :startDate AND :endDate'
             );
             $closedTicket->setParameter('problemId', $problemName)
                         ->setParameter('problemDetailId', $detailName)
+                        ->setParameter('companyName', $companyName)
                         ->setParameter('startDate', $startDate)
                         ->setParameter('endDate', $endDate);
             $responseClosed = $closedTicket->getResult();
 
-            $showOpen = floatval($responseOpen[0]['countOpenTickets']);
-            $showClosed = floatval($responseClosed[0]['countClosedTickets']);
-
             return $this->json(array('problems' => $problemList,
                                     'details' => $detailList,
-                                    'openTickets' => $showOpen,
-                                    'closedTickets' => $showClosed,
+                                    'openTicketDetail' => $responseOpen,
+                                    'closedTicketDetail' => $responseClosed,
                                     'postedData' => $problemName,
                                     'postedData2' => $detailName,
             ));
